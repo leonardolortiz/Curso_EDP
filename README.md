@@ -13,7 +13,7 @@ Los repositorios del **simulador HALCON** se encuentran en:
 ---
 
 ## 📂 Estructura del repositorio
-- Materiales del curso
+- Apuntes del curso
 - Ejemplos y prácticas
 - Documentación adicional
 

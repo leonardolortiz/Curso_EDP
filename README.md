@@ -19,4 +19,4 @@ Los repositorios del **simulador HALCON** se encuentran en:
 
 ---
 
-✍️ *Desarrollado para apoyar el aprendizaje y la experimentación en el Curso EDP.*
+✍️ *El dictado del curso se orienta a proveer al alumno de la capacidad de diseñar sistemas de procesamiento de señal, y utilizar el simulador HALCON como herramienta para la vericación y análisis..*

@@ -1,6 +1,0 @@
-\babel@toc {spanish}{}\relax 
-\beamer@sectionintoc {1}{Introducción}{4}{0}{1}
-\beamer@sectionintoc {2}{Componentes de un Sistema Basado en Eventos}{11}{0}{2}
-\beamer@sectionintoc {3}{Flujo de Eventos y Gestión de Eventos}{26}{0}{3}
-\beamer@sectionintoc {4}{Arquitectura Basada en Eventos (EDA)}{34}{0}{4}
-\beamer@sectionintoc {5}{Modelos de Concurrencia Basados en Eventos}{48}{0}{5}

@@ -37,7 +37,7 @@
 %\setbeameroption{show notes on second screen=right}  % También puedes usar: show notes on second screen=right
 
 \author[LLO]{Ing. Leonardo Luis Ortiz}
-\title{Introducción a la programación RTL en C++ para simulación de procesamientos digitales de señales}
+\title{Simulación RTL y dirigida por eventos en C++ para aplicaciones de DSP}
 % Informe su email de contato o comando a seguir
 % Por ejemplo, alcebiades.col@ufes.br
 \newcommand{\email}{leonardo.ortiz@ib.edu.ar}
@@ -45,7 +45,7 @@
 \setbeamertemplate{navigation symbols}{} 
 \logo{\includegraphics[scale=0.08]{images/IB.png}} 
 \institute[]{Instituto Balseiro \par Centro Atómico Bariloche} 
-\date{\today} 
+\date{} 
 %\subject{}
 
 % ---------------------------------------------------------
@@ -132,10 +132,11 @@
 		
 		\note{Si bien estos tipos desarrollados internamente pueden ser más rápidos para la simulación, suelen ser muy lentos para la síntesis y, además, pueden ofrecer resultados de mucha menor calidad que los tipos de datos con precisión a nivel de bits estándar del sector.}
 		
-		Hasta la fecha, existen dos tipos de datos de precisión bit a bit estándar en la industria: \textbf{SystemC} y los tipos de datos \textbf{Algorithmic C} de Mentor Graphics. \newline
+		Hasta la fecha, existen dos tipos de datos de precisión bit a bit estándar en la industria: \textbf{SystemC} y los tipos de datos \textbf{Algorithmic C}. \newline
 		
 		\footnotesize
-		\url{http://www.mentor.com/products/esl/high_level_synthesis/ac_datatypes}
+		\url{https://systemc.org/}\\
+		\url{http://hlslibs.org}
 		\note{
 			Si bien SystemC se desarrolló primero, la implementación de sus tipos de datos de precisión bit a bit presenta varios problemas, principalmente tiempos de ejecución prolongados. Debido a esto, la demanda de los clientes impulsó a Mentor a desarrollar sus propios tipos de datos de precisión bit a bit, que ahora se han convertido en los más utilizados en la síntesis de alto nivel. Los tipos de datos Algorithmic C no solo se simulan mucho más rápido que los tipos SystemC, sino que también ofrecen una mayor calidad de resultados de síntesis en comparación con los tipos de datos de precisión bit a bit desarrollados internamente. Además, los tipos de datos Algorithmic C son consistentes entre la simulación en C++ y RTL. Por lo tanto, cualquier código que se desarrolle en C++ se corresponde con el comportamiento real del hardware. En este contexto, este capítulo se centra en el uso de los tipos de datos Algorithmic C. Asimismo, este capítulo solo pretende ofrecer una descripción general suficiente de los tipos de datos Algorithmic C para comenzar a diseñar en C++. Puede consultar un manual completo en:
 			}

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.11.6)  17 DEC 2025 08:34
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.11.6)  20 APR 2026 14:17
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -2180,7 +2180,7 @@ Overfull \hbox (203.4569pt too wide) in paragraph at lines 706--706
  [][][][]  
  []
 
-<images/EDP/concurrency_parallelism.png, id=457, 589.4522pt x 508.14844pt>
+<images/EDP/concurrency_parallelism.png, id=456, 589.4522pt x 508.14844pt>
 File: images/EDP/concurrency_parallelism.png Graphic file (type png)
 <use images/EDP/concurrency_parallelism.png>
 Package pdftex.def Info: images/EDP/concurrency_parallelism.png  used on input 
@@ -2568,39 +2568,35 @@ ged.
 (rerunfilecheck)             Checksum: C4C4192FC6039D0BB4DAA09ABEF5E0D8;1140.
  ) 
 Here is how much of TeX's memory you used:
- 37592 strings out of 468079
- 800117 string characters out of 5435789
- 1334152 words of memory out of 5000000
- 65396 multiletter control sequences out of 15000+600000
+ 37586 strings out of 468079
+ 800038 string characters out of 5435789
+ 1334150 words of memory out of 5000000
+ 65391 multiletter control sequences out of 15000+600000
  650050 words of font info for 96 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  128i,15n,123p,780b,1007s stack positions out of 10000i,1000n,20000p,200000b,200000s
-
-pdfTeX warning (dest): name{Navigation65} has been referenced but does not exis
-t, replaced by a fixed one
-
- <C:\Users\Leonardo Ortiz\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi6
-00\ecrm2488.pk> <C:\Users\Leonardo Ortiz\AppData\Local\MiKTeX\fonts/pk/ljfour/j
-knappen/ec/dpi600\ecrm0900.pk> <C:\Users\Leonardo Ortiz\AppData\Local\MiKTeX\fo
-nts/pk/ljfour/jknappen/ec/dpi600\ecbx0900.pk> <C:\Users\Leonardo Ortiz\AppData\
-Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecbx0600.pk> <C:\Users\Leonardo
- Ortiz\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm1200.pk> <C:
-\Users\Leonardo Ortiz\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\t
-crm1000.pk> <C:\Users\Leonardo Ortiz\AppData\Local\MiKTeX\fonts/pk/ljfour/jknap
-pen/ec/dpi600\ecbx1095.pk> <C:\Users\Leonardo Ortiz\AppData\Local\MiKTeX\fonts/
-pk/ljfour/jknappen/ec/dpi600\ecxc1000.pk> <C:\Users\Leonardo Ortiz\AppData\Loca
-l\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecbx1000.pk> <C:\Users\Leonardo Ort
-iz\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm1000.pk> <C:\Use
-rs\Leonardo Ortiz\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecbx2
-074.pk> <C:\Users\Leonardo Ortiz\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/
-ec/dpi600\ecrm0600.pk> <C:\Users\Leonardo Ortiz\AppData\Local\MiKTeX\fonts/pk/l
-jfour/jknappen/ec/dpi600\ecrm0800.pk> <C:\Users\Leonardo Ortiz\AppData\Local\Mi
-KTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm1095.pk> <C:\Users\Leonardo Ortiz\A
-ppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm1440.pk><C:/Program 
-Files/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
-Output written on "Event-Driven Programming.pdf" (64 pages, 17189269 bytes).
+ <C:\Users\Leonardo Ortiz\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dp
+i600\ecrm2488.pk> <C:\Users\Leonardo Ortiz\AppData\Local\MiKTeX\fonts/pk/ljfour
+/jknappen/ec/dpi600\ecrm0900.pk> <C:\Users\Leonardo Ortiz\AppData\Local\MiKTeX\
+fonts/pk/ljfour/jknappen/ec/dpi600\ecbx0900.pk> <C:\Users\Leonardo Ortiz\AppDat
+a\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecbx0600.pk> <C:\Users\Leonar
+do Ortiz\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm1200.pk> <
+C:\Users\Leonardo Ortiz\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600
+\tcrm1000.pk> <C:\Users\Leonardo Ortiz\AppData\Local\MiKTeX\fonts/pk/ljfour/jkn
+appen/ec/dpi600\ecbx1095.pk> <C:\Users\Leonardo Ortiz\AppData\Local\MiKTeX\font
+s/pk/ljfour/jknappen/ec/dpi600\ecxc1000.pk> <C:\Users\Leonardo Ortiz\AppData\Lo
+cal\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecbx1000.pk> <C:\Users\Leonardo O
+rtiz\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm1000.pk> <C:\U
+sers\Leonardo Ortiz\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecb
+x2074.pk> <C:\Users\Leonardo Ortiz\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappe
+n/ec/dpi600\ecrm0600.pk> <C:\Users\Leonardo Ortiz\AppData\Local\MiKTeX\fonts/pk
+/ljfour/jknappen/ec/dpi600\ecrm0800.pk> <C:\Users\Leonardo Ortiz\AppData\Local\
+MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm1095.pk> <C:\Users\Leonardo Ortiz
+\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm1440.pk><C:/Progra
+m Files/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
+Output written on "Event-Driven Programming.pdf" (64 pages, 17186137 bytes).
 PDF statistics:
- 1317 PDF objects out of 1440 (max. 8388607)
- 135 named destinations out of 1000 (max. 500000)
+ 1311 PDF objects out of 1440 (max. 8388607)
+ 134 named destinations out of 1000 (max. 500000)
  641 words of extra memory for PDF output out of 10000 (max. 10000000)
 

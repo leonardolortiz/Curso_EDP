@@ -1,0 +1,47 @@
+# File types
+*.py~
+*.asv
+*.m~
+*.dvi
+*.ps
+*.aux
+*.log
+*.xml
+*.synctex.gz
+*.bib
+*.bbl
+*.cls
+*.gz
+*.log
+*.nav
+*.out
+*.snm
+*.tex
+*.toc
+*.vrb
+*.png
+*.jpg
+*.fig
+*.bin
+*.json
+*.exe
+*.json
+*.pyc
+*.o
+*output
+# *.pdf
+*.tex
+*.csv
+ 
+# Hidden files and directories
+.vscode
+.editorconfig
+.out
+.history/*
+build_tex.sh
+clean_tex.sh
+
+# Directories
+*images/*
+
+# Don't ignore

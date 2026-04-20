@@ -8,6 +8,6 @@
 \beamer@sectionintoc {7}{Example 4. Libraría fftw. Actualización del ejemplo 3}{9}{0}{7}
 \beamer@sectionintoc {8}{Example 5. Procesamiento de audio (Eco), Tipo de modulación simple (AM/FM)}{10}{0}{8}
 \beamer@sectionintoc {9}{Aritmética de Punto fijo}{11}{0}{9}
-\beamer@sectionintoc {10}{Proyecto aprobación cursada}{12}{0}{10}
+\beamer@sectionintoc {10}{Proyecto aprobación cursada - Día 1}{12}{0}{10}
 \beamer@sectionintoc {11}{Proyecto aprobación cursada - Día 2}{13}{0}{11}
 \beamer@sectionintoc {12}{Proyecto aprobación cursada - Día 3}{14}{0}{12}

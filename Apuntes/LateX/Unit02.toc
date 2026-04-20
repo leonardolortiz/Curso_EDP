@@ -1,0 +1,4 @@
+\babel@toc {spanish}{}\relax 
+\beamer@sectionintoc {1}{Simulador HALCON}{3}{0}{1}
+\beamer@sectionintoc {2}{Tools}{32}{0}{2}
+\beamer@sectionintoc {3}{Ejemplo}{41}{0}{3}

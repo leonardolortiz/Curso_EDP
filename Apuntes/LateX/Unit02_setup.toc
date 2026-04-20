@@ -1,0 +1,2 @@
+\babel@toc {spanish}{}\relax 
+\beamer@sectionintoc {1}{Instalación del Simulador HALCON}{3}{0}{1}

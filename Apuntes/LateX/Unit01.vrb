@@ -1,0 +1,18 @@
+\frametitle{Programación controlada por eventos}
+
+	\begin{lstlisting}[language=,basicstyle=\ttfamily\tiny]
+	#	
+	do forever: 	# the event loop
+		 get an event from the input stream
+		
+		 if event type == EndOfEventStream :
+		 	quit # break out of event loop
+		 if event type == ... :
+		 	call the appropriate handler subroutine, passing it event information as an argument
+		 elif event type == ... :
+		 	call the appropriate handler subroutine, passing it event information as an argument
+		 else:    	# handle an unrecognized type of event
+		 	ignore the event, or raise an exception
+	#	 	
+		
+	\end{lstlisting}

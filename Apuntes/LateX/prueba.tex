@@ -1,0 +1,149 @@
+\documentclass{beamer}
+
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows,positioning, shapes.symbols }
+\usetikzlibrary{arrows.meta}
+
+\usetheme{default} % Puedes elegir otro tema si prefieres
+
+\title{Diseño de Sistemas: Flujo de Trabajo}
+\author{Tu Nombre}
+\date{\today}
+
+\begin{document}
+	
+\frame{\titlepage}
+
+\section{Visión General del Diseño}
+
+\begin{frame}
+\begin{tikzpicture}[
+	module/.style={draw, rectangle, minimum width=5cm, minimum height=3cm},
+	cloud/.style={cloud, cloud puffs=15, cloud ignores aspect, minimum width=2.5cm, minimum height=1.5cm, draw, fill=gray!30},
+	block/.style={draw, rectangle, minimum width=2cm, minimum height=0.5cm, fill=gray!30},
+	>=stealth
+	]
+	
+	% Dibujar módulos
+	\node[module] (m1) {Module 1};
+	\node[module, right=0cm of m1] (m2) {Module 2};
+	\node[module, below=0cm of m1, minimum width=10cm] (m3) {Module 3};
+	
+	% Clouds
+	\node[cloud, anchor=center] (c1) at ([yshift=0.3cm]m1.center) {Cloud 1};
+	\node[cloud, anchor=center] (c2) at ([yshift=0.3cm]m2.center) {Cloud 2};
+	\node[cloud, anchor=center] (c3) at ([yshift=-0.7cm]m3.north) {Cloud 3};
+	
+	% Bloque final
+	\node[block, below=1.2cm of c3] (final) {};
+	
+	% Flechas
+	\draw[->] ([xshift=-1.5cm]c1.west) -- (c1.west);
+	\draw[->] (c1.east) -- (c2.west);
+	\draw[->] (c2.east) -- ([xshift=1.5cm]c2.east);
+	
+	% conexiones a Cloud 3
+	\draw[->] (c1.south) -- ++(0,-1) -| (c3.west);
+	\draw[->] (c2.south) -- ++(0,-1) -| (c3.east);
+	
+	% conexiones de Cloud 3 al bloque
+	\draw[->] (c3.south) -- (final.north);
+	\draw[->] (final.south) -- ++(0,-0.8);
+	
+\end{tikzpicture}
+\end{frame}
+
+%\begin{frame}{Componentes del Diseño a Nivel de Sistema}
+%\begin{tikzpicture}[scale=0.3,remember picture, overlay, , every node/.style={transform shape},
+%	block/.style={rectangle, draw, fill=gray!30, text centered, rounded corners, minimum height=2em, minimum width=2.5cm, every node/.style={transform shape},},
+%	process/.style={rectangle, draw, fill=gray!30, text centered, minimum height=2em, minimum width=2.5cm, every node/.style={transform shape},},
+%	decision/.style={ellipse, draw, fill=gray!30, text centered, minimum height=2em, minimum width=2.5cm, every node/.style={transform shape},},
+%	line/.style={-Stealth, thick},
+%	subsystem/.style={rectangle, draw, thick, inner sep=1em, text centered, minimum width=6cm, minimum height=4cm, every node/.style={transform shape},},
+%	subsystem_label/.style={font=\bfseries\small}, >=Stealth]
+%	
+%	% Definición de nodos
+%	\node [block, font=\bfseries\LARGE, text centered, text height=1em, minimum width=8cm, minimum height=3.7cm] (design_spec) at (2.5,10) {Design Specification};
+%	\node [block, font=\bfseries\LARGE, text centered, text height=1em, minimum width=12cm, minimum height=3.7cm] (float_point_desc) at (15,10){Floating Point Behavioral Description};
+%	\node [subsystem, text centered, text height=3cm, minimum width=25cm, minimum height=5cm] (algo_dev) at (9.5,10) {}; 
+%	\node[above, font=\bfseries\huge] at (8,11.5) {Algorithm development};
+%	\node [subsystem, minimum width=12cm, minimum height=23.5cm] (sw_dev) at (3, -4.5) {};
+%	
+%	% Software development and testing
+%	\node[above, font=\bfseries\huge, rotate=90] at (-2,-10.2) {\bfseries Software development and testing};
+%	\node [subsystem, minimum width=12cm, minimum height=23.5cm] (sw_dev) at (16, -4.5) {};
+%	\node[above, font=\bfseries\huge, rotate=90] at (11,-8.5) {\bfseries System level design, verification and testing};
+%	\node [subsystem, minimum width=15cm, minimum height=28.7cm] (hw_dev) at (30, -1.9) {};
+%	\node[above, font=\bfseries\huge] at (30,11.5) {\bfseries Hardware development and testing};
+%
+%	 % Hardware development and testing
+%	\node [process, minimum width=3cm, minimum height=2.5cm, font=\bfseries\huge] (hw) at (29.5,10) {HW};
+%	\node [process, minimum width=3cm, minimum height=2.5cm, font=\bfseries\huge] (fixed_point_conv) at (29.5,6.5) {Fixed Point Conversion};
+%	\node [process, minimum width=3cm, minimum height=2.5cm, font=\bfseries\huge] (rtl_verilog) at (29.5,3
+%	) {RTL Verilog Implementation};
+%	\node [process, minimum width=3cm, minimum height=2.5cm, font=\bfseries\huge] (func_verify) at (29.5,-1.1) {Functional Verification};
+%	\node [decision, minimum width=3cm, minimum height=2.5cm, font=\bfseries\huge] (synthesis) at (29.5,-4.5) {Synthesis};
+%	\node [process, minimum width=3cm, minimum height=2.5cm, font=\bfseries\huge] (gate_level) at (29.5,-8) {Gate Level Net List};
+%	\node [process, minimum width=3cm, minimum height=2.5cm, font=\bfseries\huge] (timing_func) at (29.5,-11.3) {Timing \& Functional Verification};
+%	\node [process, minimum width=3cm, minimum height=2.5cm, font=\bfseries\huge] (layout) at (29.5,-14.5) {Layout};
+%	
+%	% Software development
+%	\node [process, minimum width=3cm, minimum height=2.5cm, font=\bfseries\huge] (sw) at (2.5,5.5) {SW};
+%	\node [process, minimum width=8cm, minimum height=4.5cm, text width=7.5cm, font=\bfseries\huge] (fixed_point_sw) at (2.8,1) {Fixed Point\\Implementation S/W};
+%	\node [process, minimum width=3cm, minimum height=2.5cm, text width=7cm, font=\bfseries\huge] (system_integration) at (16, -8){System Integration\\and testing};
+%	
+%	% Interconexiones SW/HW
+%	\node [decision, minimum width=1.5cm, minimum height=3cm, text width=7cm, font=\bfseries\huge] (sw_hw_partition) at (16,5.5){S/W -H/W\\Partition};
+%	\node [decision, minimum width=1.5cm, minimum height=4cm, text width=7cm, font=\bfseries\huge] (sw_hw_cove) at (16, 1){S/W -H/W\\Co-verification};
+%	
+%	
+%	\draw[->, thick] (design_spec) -- (float_point_desc);
+%	\draw[->, thick] (float_point_desc) -- (sw_hw_partition);
+%	\draw[->, thick] (sw_hw_partition) -- (sw);
+%	\draw[->, thick] (sw) -- (fixed_point_sw);
+%	\draw[->, thick] (fixed_point_sw) -- (sw_hw_cove);
+%	\draw[->, thick] (sw_hw_cove) -- (fixed_point_sw);
+%	\draw[->, thick] (hw) -- (fixed_point_conv);
+%	\draw[<->, thick] (fixed_point_conv) -- (rtl_verilog);
+%	\draw[<->, thick] (rtl_verilog) -- (sw_hw_cove);
+%	\draw[<->, thick] (rtl_verilog) -- (func_verify);
+%	\draw[->, thick] (func_verify) -- (synthesis);
+%	\draw[->, thick] (synthesis) -- (gate_level);
+%	\draw[->, thick] (gate_level) -- (timing_func);
+%	\draw[->, thick] (timing_func) -- (layout);
+%	
+%	\draw[->, thick] (layout.west) -- ++(-5,0) -- ++(0,3.2) -- (timing_func.west);
+%	\draw[->, thick] (timing_func.east) -- ++(1,0) -- ++(0,6.8) -- (synthesis.east);
+%	\draw[->, thick] (layout.west) -- ++(-12,0) -- (system_integration.south);
+%	\draw[<-, thick] (system_integration.north) -- ++(0,2) -- ++(-13.2,0)--  (fixed_point_sw.south);
+%	
+%\end{tikzpicture}
+%\end{frame}
+	
+%	\section{Detalles del Proceso}
+%	
+%	\begin{frame}{Fase de Desarrollo de Software y Pruebas}
+%		Aquí puedes describir con más detalle las etapas de la sección "Software development and testing", como:
+%		\begin{itemize}
+%			\item \textbf{SW}: Desarrollo inicial del software.
+%			\item \textbf{Fixed Point Implementation S/W}: Implementación en punto fijo del software.
+%			\item \textbf{System Integration and testing}: Integración y pruebas del sistema completo.
+%			\item \textbf{S/W -H/W Partition} y \textbf{S/W -H/W Co-verification}: Procesos clave para la partición y co-verificación entre hardware y software.
+%		\end{itemize}
+%	\end{frame}
+%	
+%	\begin{frame}{Fase de Desarrollo y Pruebas de Hardware}
+%		Aquí puedes detallar la fase de "Hardware development and testing":
+%		\begin{itemize}
+%			\item \textbf{HW}: Desarrollo del hardware.
+%			\item \textbf{Fixed Point Conversion}: Conversión a punto fijo.
+%			\item \textbf{RTL Verilog Implementation}: Implementación en RTL (Register-Transfer Level) usando Verilog.
+%			\item \textbf{Functional Verification}: Verificación funcional.
+%			\item \textbf{Synthesis}: Síntesis lógica.
+%			\item \textbf{Gate Level Net List}: Lista de conexiones a nivel de compuertas.
+%			\item \textbf{Timing & Functional Verification}: Verificación de temporización y funcional.
+%			\item \textbf{Layout}: Diseño físico del circuito.
+%		\end{itemize}
+%	\end{frame}
+%	
+\end{document}

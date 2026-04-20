@@ -1,0 +1,1715 @@
+\documentclass[11pt]{beamer}
+\usetheme{Madrid}
+\usefonttheme{serif}
+
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage[T1]{fontenc}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx, xcolor}
+\usepackage{listings}
+
+\usepackage[absolute,overlay]{textpos}
+\usepackage[most]{tcolorbox}
+
+\usepackage{tikz}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, calc, automata}
+\usetikzlibrary{shapes, arrows}
+
+\tikzstyle{startstop} = [rectangle, rounded corners, minimum width=3cm, minimum height=1cm,text centered, draw=black, fill=red!30]
+\tikzstyle{process} = [rectangle, minimum width=3cm, minimum height=1cm, text centered, draw=black, fill=blue!20]
+\tikzstyle{decision} = [diamond, aspect=2, minimum width=3.5cm, minimum height=1cm, text centered, draw=black, fill=yellow!40]
+\tikzstyle{arrow} = [thick, ->, >=Stealth]
+
+%\tikzstyle{cloud} = [draw, ellipse,fill=gray!40,
+%minimum height=2em, minimum width=4em]
+%\tikzstyle{block} = [draw, rectangle, minimum height=1cm, minimum width=0.5cm, fill=gray!20]
+%\tikzstyle{module} = [draw, rectangle, minimum height=4cm, minimum width=6cm]
+%\tikzstyle{line} = [draw, -latex']
+
+
+\DeclareMathOperator{\sen}{sen}
+\DeclareMathOperator{\tg}{tg}
+
+\setbeamertemplate{caption}[numbered]
+
+%\setbeameroption{show notes on second screen=right}  % También puedes usar: show notes on second screen=right
+
+\author[LLO]{Ing. Leonardo Luis Ortiz}
+\title{Introducción a la programación RTL en C++ para simulación de procesamientos digitales de señales}
+% Informe su email de contato o comando a seguir
+% Por ejemplo, alcebiades.col@ufes.br
+\newcommand{\email}{leonardo.ortiz@ib.edu.ar}
+%\setbeamercovered{transparent} 
+\setbeamertemplate{navigation symbols}{} 
+\logo{\includegraphics[scale=0.08]{images/IB.png}} 
+\institute[]{Instituto Balseiro \par Centro Atómico Bariloche} 
+\date{\today} 
+%\subject{}
+
+% ---------------------------------------------------------
+% Selecione un estilo de referencia
+\bibliographystyle{apalike}
+
+%\bibliographystyle{abbrv}
+%\setbeamertemplate{bibliography item}{\insertbiblabel}
+% ---------------------------------------------------------
+
+% ---------------------------------------------------------
+% Incluir los slides 
+%\usepackage[spanish,hyperpageref]{backref}
+
+%\renewcommand{\backrefpagesname}{Cita de página(s):~}
+%\renewcommand{\backref}{}
+%\renewcommand*{\backrefalt}[4]{
+	%	\ifcase #1 %
+	%		Sin citas en el texto.%
+	%	\or
+	%		Citado en la página #2.%
+	%	\else
+	%		Citado #1 veces en las páginas #2.%
+	%	\fi}%
+% ---------------------------------------------------------
+%% Configuración para el código
+%\lstset{
+%	language=C++,
+%	basicstyle=\ttfamily\scriptsize,
+%	keywordstyle=\color{blue},
+%	commentstyle=\color{gray},
+%	stringstyle=\color{orange},
+%	showstringspaces=false,
+%	breaklines=true,
+%	frame=single,
+%	numbers=left,
+%	numberstyle=\tiny,
+%	tabsize=2
+%}
+
+% Estilo para VHDL
+\lstdefinelanguage{VHDL}{
+	morekeywords={
+		library,use,all,entity,is,port,in,out,end,architecture,of,begin,
+		signal,process,if,then,else,elsif,wait,until,when,others
+	},
+	sensitive=true,
+	morecomment=[l]--,
+	morestring=[b]"
+}
+
+\lstset{
+	language=VHDL,
+	basicstyle=\ttfamily\scriptsize,
+	keywordstyle=\color{blue},
+	commentstyle=\color{gray},
+	stringstyle=\color{orange},
+	showstringspaces=false,
+	breaklines=true,
+	frame=single,
+	numbers=left,
+	numberstyle=\tiny,
+	tabsize=2,
+	captionpos=b
+}
+
+
+\begin{document}
+	
+	\begin{frame}
+		\titlepage
+	\end{frame}
+	
+	\begin{frame}{Contenido}
+		\tableofcontents 
+	\end{frame}
+	
+	\section{Introducción}
+	
+		\begin{frame}{Diseño digital}
+		\hspace{0.8cm}
+		\begin{tikzpicture}[scale=0.28,remember picture, overlay, , every node/.style={transform shape},
+			block/.style={rectangle, draw, fill=gray!30, text centered, rounded corners, minimum height=2em, minimum width=2.5cm, every node/.style={transform shape},},
+			process/.style={rectangle, draw, fill=gray!30, text centered, minimum height=2em, minimum width=2.5cm, every node/.style={transform shape},},
+			decision/.style={ellipse, draw, fill=gray!30, text centered, minimum height=2em, minimum width=2.5cm, every node/.style={transform shape},},
+			line/.style={-Stealth, thick},
+			subsystem/.style={rectangle, draw, thick, inner sep=1em, text centered, minimum width=6cm, minimum height=4cm, every node/.style={transform shape},},
+			subsystem_label/.style={font=\bfseries\small}, >=Stealth]
+			
+			% Definición de nodos
+			\node [block, font=\bfseries\huge, text centered, text height=1em, minimum width=8cm, minimum height=3.7cm, text width=7.5cm] (design_spec) at (2.5,9.7) {Especificaciones\\del Diseño};
+			\node [block, font=\bfseries\huge, text centered, text height=1em, minimum width=12cm, minimum height=3.7cm, text width=7.5cm] (float_point_desc) at (15,9.7){Descripción del Comportamiento\\en Punto Flotante};
+			\node [subsystem, text centered, text height=3cm, minimum width=25cm, minimum height=5cm] (algo_dev) at (9.5,10) {}; 
+			\node[above, font=\bfseries\huge] at (8,11.5) {Desarrollo de Algoritmos};
+			\node [subsystem, minimum width=12cm, minimum height=23.5cm, fill=orange!20] (sw_dev) at (3, -4.5) {};
+			
+			% Software development and testing
+			\node[above, font=\bfseries\huge, text width=8cm] at (1.7,-16) {\bfseries Desarrollo de software y Testeo};
+			\node [subsystem, minimum width=12cm, minimum height=23.5cm, fill=blue!10] (sw_dev) at (16, -4.5) {};
+			\node[above, font=\bfseries\huge, text width=5.5cm] at (13,-16) {\bfseries Diseño a Nivel de Systema, Verificación y Testeo};
+			\node [subsystem, minimum width=15cm, minimum height=28.7cm, fill=gray!30] (hw_dev) at (30, -1.9) {};
+			\node[above, font=\bfseries\huge] at (30,11.5) {\bfseries Desarrollo de Hardware y Testeo};
+			
+			% Hardware development and testing
+			\node [process, minimum width=3cm, minimum height=2.5cm, font=\bfseries\huge] (hw) at (29.5,10) {HW};
+			\node [process, minimum width=3cm, minimum height=2.5cm, font=\bfseries\huge] (fixed_point_conv) at (29.5,6.5) {Conversión Punto Fijo};
+			\node [process, minimum width=3cm, minimum height=2.5cm, font=\bfseries\huge] (rtl_verilog) at (29.5,3
+			) {Implementación RTL Verilog};
+			\node [process, minimum width=3cm, minimum height=2.5cm, font=\bfseries\huge] (func_verify) at (29.5,-1.1) {Verificación Funcional};
+			\node [decision, minimum width=3cm, minimum height=2.5cm, font=\bfseries\huge] (synthesis) at (29.5,-4.5) {Síntesis};
+			\node [process, minimum width=3cm, minimum height=2.5cm, text width=8cm, font=\bfseries\huge] (gate_level) at (29.5,-8) {Conexiones a Nivel de Compuertas (Netlist)};
+			\node [process, minimum width=3cm, minimum height=2.5cm, text width=7.5cm, font=\bfseries\huge] (timing_func) at (29.5,-11.3) {Tiempo \& Verificación Funcional};
+			\node [process, minimum width=3cm, minimum height=2.5cm, text width=7.5cm, font=\bfseries\huge] (layout) at (29.5,-14.5) {Layout};
+			
+			% Software development
+			\node [process, minimum width=3cm, minimum height=2.5cm, font=\bfseries\huge] (sw) at (2.5,5.5) {SW};
+			\node [process, minimum width=8cm, minimum height=4.5cm, text width=7.5cm, font=\bfseries\huge] (fixed_point_sw) at (2.8,1) {Implementación Punto Fijo S/W};
+			\node [process, minimum width=3cm, minimum height=2.5cm, text width=7cm, font=\bfseries\huge] (system_integration) at (16, -8){System Integration\\and testing};
+			
+			% Interconexiones SW/HW
+			\node [decision, minimum width=1.5cm, minimum height=3cm, text width=7cm, font=\bfseries\huge] (sw_hw_partition) at (16,5.3){Partición S/W - H/W};
+			\node [decision, minimum width=1.5cm, minimum height=4cm, text width=7cm, font=\bfseries\huge] (sw_hw_cove) at (16, 1){Co-verificación S/W - H/W};
+			
+			
+			\draw[->, thick] (design_spec) -- (float_point_desc);
+			\draw[->, thick] (float_point_desc) -- (sw_hw_partition);
+			\draw[->, thick] (sw_hw_partition) -- (sw);
+			\draw[->, thick] (sw) -- (fixed_point_sw);
+			\draw[->, thick] (fixed_point_sw) -- (sw_hw_cove);
+			\draw[->, thick] (sw_hw_cove) -- (fixed_point_sw);
+			\draw[<->, thick] (sw_hw_cove.east) -- ++(2,0) -- ++(0,2) -- (rtl_verilog.west);
+			\draw[->, thick] (hw) -- (fixed_point_conv);
+			\draw[<->, thick] (fixed_point_conv) -- (rtl_verilog);
+			%\draw[<->, thick] (rtl_verilog) -- (sw_hw_cove);
+			\draw[<->, thick] (rtl_verilog) -- (func_verify);
+			\draw[->, thick] (func_verify) -- (synthesis);
+			\draw[->, thick] (synthesis) -- (gate_level);
+			\draw[->, thick] (gate_level) -- (timing_func);
+			\draw[->, thick] (timing_func) -- (layout);
+			\draw[->, thick] (sw_hw_partition.east) -- ++(2,0) -- ++(0,4.7) -- (hw.west);
+			\draw[->, thick] (layout.west) -- ++(-5,0) -- ++(0,3.2) -- (timing_func.west);
+			\draw[->, thick] (timing_func.east) -- ++(1,0) -- ++(0,6.8) -- (synthesis.east);
+			\draw[->, thick] (layout.west) -- ++(-9.7,0) -- (system_integration.south);
+			\draw[<-, thick] (system_integration.north) -- ++(0,2) -- ++(-13.2,0)--  (fixed_point_sw.south);
+			
+		\end{tikzpicture}
+	\end{frame}
+	
+	
+	\begin{frame}
+		
+		\hspace{0.7cm}		
+		\begin{tikzpicture}[remember picture,overlay, >=Stealth]
+			\node[draw, rectangle, minimum width=12cm, minimum height=7.3cm, anchor=north west, fill=gray!50] (mod12) at (-0.9,2.9) {};
+			\node[draw, rectangle, minimum width=5.1cm, minimum height=6cm, anchor=north west, fill=white] (mod1) at (-0.7,2) {};
+			\node[draw, rectangle, minimum width=4.6cm, minimum height=6cm, anchor=north west, fill=white] (mod2) at (6.3,2) {};
+			
+			\node [cloud, draw,cloud puffs=10,cloud puff arc=120, aspect=3, inner ysep=1em, text width=1cm, scale=0.4] (cloud1_mod1) at (0.2,0) {};
+			\node [cloud, draw,cloud puffs=10,cloud puff arc=120, aspect=3, inner ysep=1em, text width=1cm, scale=0.4] (cloud2_mod1) at (0.2,-2.5) {};
+			\node [cloud, draw,cloud puffs=10,cloud puff arc=120, aspect=3, inner ysep=1em, text width=1cm, scale=0.4, rotate=90] (cloud3_mod1) at (2.8,-1.2) {};
+			\node[draw, rectangle, minimum width=0.5cm, minimum height=1.5cm, anchor=north west] (R1_mod1) at (1.2,0.7) {};
+			\node[draw, rectangle, minimum width=0.5cm, minimum height=1.5cm, anchor=north west] (R2_mod1) at (1.2,-1.5) {};
+			\node[draw, rectangle, minimum width=0.5cm, minimum height=1.5cm, anchor=north west] (R3_mod1) at (3.7,-0.5) {};
+			
+			\node [cloud, draw,cloud puffs=10,cloud puff arc=120, aspect=3, inner ysep=1em, text width=1.5cm, scale=0.7, rotate=90, fill=white] (glue_logic) at (5.3,0.1) {};
+			
+			\node [cloud, draw,cloud puffs=10,cloud puff arc=120, aspect=3, inner ysep=1em, text width=1.5cm, scale=0.8, rotate=90] (cloud1_m2) at (7.4,0.1) {};
+			\node [cloud, draw,cloud puffs=10,cloud puff arc=120, aspect=3, inner ysep=1em, text width=1.5cm, scale=0.7, rotate=90] (cloud2_m2) at (9.3,-1) {};
+			
+			\node[draw, rectangle, minimum width=0.35cm, minimum height=2.6cm, anchor=north west] (R1_mod2) at (8.2,0.2) {};
+			\node[draw, rectangle, minimum width=0.35cm, minimum height=3.5cm, anchor=north west] (R2_mod2) at (10.1,1) {};
+			
+			\draw[->, thick] (-1,0) -- (cloud1_mod1);
+			\draw[->, thick] (-1,-2.5) -- (cloud2_mod1);
+			\draw[->, thick] (cloud2_mod1.north) -- (cloud1_mod1.south);
+			\draw[->, thick] (-0.6, 0) to (-.6, -2.2) to (cloud2_mod1);
+			\draw[->, thick] (cloud1_mod1) -- (R1_mod1);
+			\draw[->, thick] (cloud2_mod1) -- (R2_mod1);
+			\draw[->, thick] (1.7,0.3) -- (4.8,0.3);
+			\draw[->, thick] (1.7,-1.7) -- (2.6,-1.7);
+			\draw[->, thick] (0.9,-4.8) -- (0.9,-2.8) -- (1.4,-2.8);
+			\draw[->, thick] (0.9,-0.8) -- (0.9,-0.6) -- (1.4,-0.6);
+			\draw[->, thick] (3.5,-2.2) -- (3.5,-1.8) -- (3.9,-1.8);
+			\draw[->, thick] (cloud3_mod1) -- (R3_mod1);
+			\draw[->, thick] (4.2,-0.7) -- (4.9,-0.7);
+			\draw[->, thick] (4.2,-1.1) -- (7.15,-1.1);
+			\draw[->, thick] (3,0.3) -- (3.0,1.3) -- (7.15,1.3);
+			
+			\draw[->, thick] (5.7,0.8) -- (6.9,0.8);
+			\draw (1.45,-0.85) circle (0.5mm);
+			\draw (1.45,-3.05) circle (0.5mm);
+			
+			\draw[-, thick,gray!80] (1.45,-3.1) -- (1.45,-4.8);
+			\draw[-, thick,gray!80] (1.45,-3.7) -- (2.2,-3.7) -- (2.2,-1.0) -- (1.45, -1.0) -- (1.45,-0.9);
+			\draw[-, thick,gray!80] (1.45,-3.7) -- (10.3,-3.7) -- (10.3,-2.6);
+			
+			% module 2
+			\draw[->, thick] (8,-2.6) -- (8,-2.2) -- (8.4,-2.2);
+			\draw[->, thick] (9.9,-2.6) -- (9.9,-2.25) -- (10.3,-2.25);
+			\draw[->, thick] (7.8,-0.3) -- (8.2,-0.3);
+			\draw[->, thick] (7.75,-0.9) -- (8.2,-0.9);
+			\draw[->, thick] (8.55,-0.5) -- (8.9,-0.5);
+			\draw[->, thick] (9.7,-0.5) -- (10.1,-0.5);
+			\draw[->, thick] (9.7,-1.5) -- (10.1,-1.5);
+			\draw[->, thick] (10.45,-0.7) -- (11.6,-0.7);
+			\draw[->, thick] (7.9,0.8) -- (10.1,0.8);
+			\draw (10.3,-2.55) circle (0.5mm);
+			
+			\node at (5.27,0.4) {glue};
+			\node at (5.25,-0.1) {logic};
+			\node at (0.5,-4.8) {clk};
+			\node at (2,-4.8) {rst\_n};
+			
+			\node at (1.30,2.5) {Módulo de Nivel Superior};
+			\node at (0.1,-3.8) {Módulo 1};
+			\node at (7.1,-3.8) {Módulo 2};
+			\node at (8.5,3.5) {glue logic: lógica de encolado};
+			
+		\end{tikzpicture}
+		
+	\end{frame}
+	
+	\begin{frame}
+		\begin{tikzpicture}[remember picture,overlay, >=Stealth]
+			
+			\node[draw, rectangle, minimum width=5cm, minimum height=4cm, anchor=north west, fill=white] (mod12) at (0.9,2.9) {};
+			\node[draw, rectangle, minimum width=5cm, minimum height=4cm, anchor=north west, fill=white] (mod1) at (5.95,2.9) {};
+			\node[draw, rectangle, minimum width=10cm, minimum height=3.5cm, anchor=north west, fill=white] (mod2) at (0.9,-1.15) {};
+			
+			\node [cloud, draw,cloud puffs=12,cloud puff arc=180, aspect=3, inner ysep=1em, text width=1cm, scale=0.45, minimum height=5cm, xscale=1.5, yscale=1, fill=gray!50] (cloud1_mod1) at (2.7,1) {\scriptsize Nube 1};
+			\node [cloud, draw,cloud puffs=12,cloud puff arc=180, aspect=3, inner ysep=1em, text width=1cm, scale=0.45, minimum height=5cm, xscale=1.5, yscale=1,fill=gray!50] (cloud2_mod2) at (7.6,1) {\scriptsize Nube 2};
+			\node [cloud, draw,cloud puffs=12,cloud puff arc=180, aspect=3, inner ysep=1em, text width=1cm, scale=0.45, minimum height=5cm, xscale=1.5, yscale=1, fill=gray!50] (cloud3_mod3) at (7.6,-2.5) {\scriptsize Nube 3};
+			\node[draw, rectangle, minimum width=0.4cm, minimum height=3cm, anchor=north west, fill=gray!15] (R1_mod1) at (4.35,2.1) {};
+			\node[draw, rectangle, minimum width=0.4cm, minimum height=3cm, anchor=north west, fill=gray!15] (R2_mod2) at (9.3,2.1) {};
+			\node[draw, rectangle, minimum width=3cm, minimum height=0.4cm, anchor=north west, fill=gray!15] (R3_mod3) at (6.1,-4) {};
+			
+			% arrows
+			\draw[->, thick] (-0.1,0.8) -- (1.45,0.8);
+			\draw[->, thick] (-0.1,1.4) -- (1.45,1.4);
+			
+			\draw[->, thick] (4.0,0.8) -- (4.35,0.8);
+			\draw[->, thick] (4.0,1.4) -- (4.35,1.4);
+			
+			\draw[->, thick] (4.78,0.8) -- (6.3,0.8);
+			\draw[->, thick] (4.78,1.4) -- (6.3,1.4);
+			
+			\draw[->, thick] (8.9,0.8) -- (9.3,0.8);
+			\draw[->, thick] (8.9,1.4) -- (9.3,1.4);
+			
+			\draw[->, thick] (9.7,0.8) -- (11.5,0.8);
+			\draw[->, thick] (9.7,1.4) -- (11.5,1.4);
+			
+			\draw[->, thick] (4.2,-1.3) -- (4.2,-0.7) -- (4.55,-0.7);
+			\draw[->, thick] (9.2,-1.3) -- (9.2,-0.7) -- (9.55,-0.7);
+			
+			\draw[->, thick] (7.1,-3.5) -- (7.1,-4.05);
+			\draw[->, thick] (7.9,-3.4) -- (7.9,-4.05);
+			
+			\draw[->, thick] (5.3,0.8) -- (5.3,-2.5) -- (6.15,-2.5);
+			\draw[->, thick] (10.5,0.8) -- (10.5,-2.5) -- (9.05,-2.5);
+			
+			\draw[->, thick] (7.5,-4.4) -- (7.5,-5.1);
+			
+			\draw[->, thick] (5.9,-4.55) -- (6.3,-4.55) -- (6.3,-4.2);
+			
+			\node at (2,2.5) {Módulo 1};
+			\node at (7.1,2.5) {Módulo 2};
+			\node at (2.2,-4.35) {Módulo 3};
+			
+		\end{tikzpicture}
+	\end{frame}
+	
+	
+	
+	
+	% ********************************************************************************
+	
+	
+	
+	\begin{frame}{¿Por qué procesamiento de señales?}
+	La siguientes áreas de Ciencia e Ingeniería	se han beneficiado por el rápido crecimiento y avances de las técnicas de procesamiento de señales. 
+	\vspace{0.2cm}
+	\begin{itemize}
+		\item Machine Learning
+		\item Análisis de Datos
+		\item Computer Vision
+		\item Procesamiento de Imágenes e Imágenes Médicas
+		\item Systemas de Comunicación
+		\item Electrónica de Potencia
+		\item Problabilidad y Estadística
+		\item Análisis Numérico
+		\item Teoría de Decisión
+		\item Circuitos Integrados
+	\end{itemize}
+	\end{frame}
+	
+	\begin{frame}{Procesamiento Digital de Señales - DSP}
+	Contenidos mínimos necesarios para DSP	\newline
+	\begin{itemize}
+		\item Fundamentos de procesamiento de señales
+		\item Conversión Analógica-Digital
+		\item Sampleo y Reconstrucción
+		\item Teorema de Nyquist
+		\item Convolución
+		\item Eliminación de ruido en señales
+		\item Transformada de Fourier
+		\item Diseño de filtros FIR e IIR 		
+	\end{itemize}
+	\end{frame}
+
+	\begin{frame}{Herramientas de Simulación}
+	\begin{tikzpicture}[remember picture,overlay]
+		\node at (2.5,1.8) 
+		{\includegraphics[width=0.5\textwidth]{images/Simulation_tools/Ansys_Lumerical.png}};
+		\node at (2.5,-2.5) {\includegraphics[width=0.4\textwidth]{images/Simulation_tools/siemens-electric-motors-design-and-simulation.png}};
+		\node at (9,2) {\includegraphics[width=0.55\textwidth]{images/Simulation_tools/Ansys.png}};
+		\node at (9,-2.5) {\includegraphics[width=0.5\textwidth]{images/Simulation_tools/PSpice_Product.png}};
+
+	\end{tikzpicture}	
+
+	\end{frame}
+	
+	\begin{frame}{Lenguajes de Descripción de Hardware - HDL}
+		En la actualidad se vuelve indispensable diseñar, modelar y simular el funcionamiento del hardware, principalmente en la industria ya que de este modo se evitan grandes pérdidas por errores de diseño. Para poder lograr esto existen los "Lenguajes de Descripción de Hardware".\newline
+		
+		Los Lenguajes de Descripción de Hardware (HDL) son una metodología de diseño digital de hardware a través de software.
+		
+		\note{
+			HDL incluye explícitamente la noción de tiempo.
+		}
+	\end{frame}
+	
+%	\begin{frame}[fragile]{Diseño digital}
+%	\begin{tikzpicture}[node distance=2cm]
+%		
+%		% Módulo 1
+%		\node[module, minimum width=5cm, minimum height=3cm] (m1) {};
+%		\node[cloud] (c1) at (-1,0) {Cloud 1};
+%		\node[block, right=1cm of c1] (b1) {};
+%		\node[below=1.2cm of c1] {Module 1};
+%		
+%		% Módulo 2
+%		\node[module, right=0.2cm of m1, minimum width=5cm, minimum height=3cm, anchor=west] (m2) {};
+%		\node[cloud, right=1cm of b1] (c2) {Cloud 2};
+%		\node[block, right=1cm of c2] (b2) {};
+%		\node[below=1.2cm of c2] {Module 2};
+%		
+%		% Módulo 3
+%		\node[module, below=0.2cm of m1.south west, anchor=north west, minimum width=10.2cm, minimum height=3.5cm] (m3) {};
+%		\node[cloud, below=1.5cm of c2] (c3) {Cloud 3};
+%		\node[block, below=1.5cm of c3, minimum width=3cm] (b3) {};
+%		\node[below=1.8cm of c3] {Module 3};
+%		
+%		% Conexiones
+%		\path[line] (c1.east) -- (b1.west);
+%		\path[line] (b1.east) -- (c2.west);
+%		\path[line] (c2.east) -- (b2.west);
+%		
+%		\path[line] (b1.south) |- (c3.west);
+%		\path[line] (b2.south) |- (c3.east);
+%		
+%		\path[line] (c3.south) -- (b3.north);
+%		
+%		% Entradas y salidas
+%		\path[line] ([xshift=-1cm]c1.west) -- (c1.west);
+%		\path[line] (b2.east) -- ++(1cm,0);
+%		\path[line] (b2.east) -- ++(1cm,-0.5cm);
+%		
+%	\end{tikzpicture}
+%	\end{frame}
+	
+	\begin{frame}{Diseño digital}
+		\begin{figure}[htb]
+			\centering
+			\includegraphics[width=0.9\textwidth]{images/Simulation_tools/pspice_cadence.png}
+		\end{figure}
+	\end{frame}
+	
+	\begin{frame}{Diseño digital}
+	\begin{figure}[htb]
+		\centering
+		\includegraphics[width=0.5\textwidth]{images/System_level_design_components}
+	\end{figure}
+	\end{frame}
+	
+	\section{Lenguajes de Descripción de Hardware - HDL}
+	
+	\begin{frame}{Lenguajes de Descripción de Hardware - HDL}
+		En la actualidad se vuelve indispensable diseñar, modelar y simular el funcionamiento del hardware, principalmente en la industria ya que de este modo se evitan grandes pérdidas por errores de diseño. Para poder lograr esto existen los "Lenguajes de Descripción de Hardware".\newline
+		
+		Los Lenguajes de Descripción de Hardware (HDL) son una metodología de diseño digital de hardware a través de software.
+		
+		\note{
+			HDL incluye explícitamente la noción de tiempo.
+		}
+	\end{frame}
+	
+	\begin{frame}{Lenguajes de Descripción de Hardware - HDL}
+		\textbf{Ventajas} \newline
+		
+		\begin{itemize}
+			\item INDEPENDIENTE DE LA TECNOLOGÍA\newline
+			\item SOPORTA VARIOS ESTILOS DE DESCRIPCIÓN (Behavioral, Dataflow, Structured, Switch)\newline
+			\item AHORRO DE TIEMPO Y COSTOS\newline
+		\end{itemize}
+		
+		
+		\note{
+			INDEPENDIENTE DE LA TECNOLOGÍA: el mismo modelo puede ser sintetizado en librerías de distintos fabricantes.
+			SOPORTA 3 ESTILOS DE DESCRIPCIÓN: (Behavioral, Dataflow, Structured)
+			AHORRO DE TIEMPO Y COSTOS: facilita las correccionesen el diseño debidas a fallos de diseño o cambios en las especificaciones.
+			
+		}
+	\end{frame}
+	
+	\begin{frame}{Lenguajes de Descripción de Hardware - HDL}
+		\textbf{Módulos} 
+		
+		El módulo es la unidad básica de diseño, en la que se describe el funcionamiento de alguna unidad lógica. Puede existir un sólo módulo o un conjunto de módulos que se instancian con un módulo estructural.\newline
+		
+		
+		\textbf{Entradas y Salidas} 
+		
+		Un módulo define la información que describe la relación entre las entradas y salidas de un circuito lógico. Las entradas y salidas están definidas por las palabras reservadas según sea el caso del lenguaje utilizado.\newline
+		
+		\textbf{Primitivas} 
+		
+		Elementos lógicos predefinidos, que son elementos estructurales que se pueden instanciar en un diseño más grande para formar una estructura más compleja.(Ej. en Verilog: and, or, xor, not)
+		
+		
+		\note{
+			Un mpodulo Verilog es una representación de software de la estructura y comportamiento del hardware físico.	
+		}
+		
+	\end{frame}
+	
+	\begin{frame}{Lenguajes de Descripción de Hardware - HDL}
+		
+		\textbf{Ejemplo de código - Detección de secuencia "101" de una cadena de bits} \newline
+		
+	Entrada: $bit\_in$ \newline
+	Salida: $seq\_detected$ (se activa cuando se detecta la secuencia 101) \newline
+	Reset y reloj incluídos.
+		
+	\end{frame}
+	
+	
+	\begin{frame}[fragile]{Lenguajes de Descripción de Hardware - VHDL}
+		\begin{lstlisting}
+		library IEEE;
+		use IEEE.STD_LOGIC_1164.ALL;
+		
+		entity seq_detector is
+		port (
+		clk          : in  STD_LOGIC;
+		rst          : in  STD_LOGIC;
+		bit_in       : in  STD_LOGIC;
+		seq_detected : out STD_LOGIC
+		);
+		end seq_detector;
+		
+		architecture Behavioral of seq_detector is
+			type state_type is (S0, S1, S2);
+			signal state, next_state : state_type;
+		begin
+			process(clk, rst)
+			begin
+				if rst = '1' then
+					state <= S0;
+				elsif rising_edge(clk) then
+					state <= next_state;
+				end if;
+			end process;
+		\end{lstlisting}
+	\end{frame}
+	
+	\begin{frame}[fragile]{Lenguajes de Descripción de Hardware - VHDL}
+	\begin{columns}[t]
+	\column{0.58\textwidth}
+	\begin{lstlisting}
+		process(state, bit_in)
+		begin
+			seq_detected <= '0';
+			case state is
+				when S0 =>
+					if bit_in = '1' then
+						next_state <= S1;
+					else
+						next_state <= S0;
+					end if;
+				when S1 =>
+					if bit_in = '0' then
+						next_state <= S2;
+					else
+						next_state <= S1;
+					end if;
+				when S2 =>
+					if bit_in = '1' then
+						next_state <= S1;
+						seq_detected <= '1';
+					else
+						next_state <= S0;
+					end if;
+			end case;
+	\end{lstlisting}	
+		
+	\column{0.38\textwidth}	
+	\begin{lstlisting}	
+				end process;
+			end Behavioral;
+	\end{lstlisting}
+	\end{columns}
+	\end{frame}
+	
+	\begin{frame}[fragile]{Lenguajes de Descripción de Hardware - VHDL Testbench)}
+	\begin{lstlisting}
+		library IEEE;
+		use IEEE.STD_LOGIC_1164.ALL;
+		
+		entity tb_seq_detector is
+		end tb_seq_detector;
+		
+		architecture testbench of tb_seq_detector is
+		
+		signal clk          : std_logic := '0';
+		signal rst          : std_logic := '0';
+		signal bit_in       : std_logic := '0';
+		signal seq_detected : std_logic;
+		
+		-- Componente a testear
+		component seq_detector is
+		port (
+		clk          : in  std_logic;
+		rst          : in  std_logic;
+		bit_in       : in  std_logic;
+		seq_detected : out std_logic
+		);
+		end component;
+	\end{lstlisting}
+	\end{frame}
+
+	\begin{frame}[fragile]{Lenguajes de Descripción de Hardware - VHDL Testbench}
+	\begin{lstlisting}
+	begin
+	
+		-- Instancia del DUT
+		uut: seq_detector
+			port map (
+				clk          => clk,
+				rst          => rst,
+				bit_in       => bit_in,
+				seq_detected => seq_detected
+			);
+			
+		-- Generador de reloj 
+		clk_process: process
+		begin
+			while true loop
+				clk <= '0'; wait for 5 ns;
+				clk <= '1'; wait for 5 ns;
+			end loop;
+		end process;
+		\end{lstlisting}
+	\end{frame}
+
+	\begin{frame}[fragile]{Lenguajes de Descripción de Hardware - VHDL Testbench}
+	\begin{lstlisting}
+		stim_proc: process
+		begin
+			rst <= '1';
+			wait for 12 ns;
+			rst <= '0';
+			
+			bit_in <= '1'; wait for 10 ns;
+			bit_in <= '0'; wait for 10 ns;
+			bit_in <= '1'; wait for 10 ns;
+			bit_in <= '0'; wait for 10 ns;
+			bit_in <= '1'; wait for 10 ns;
+			bit_in <= '1'; wait for 10 ns;
+			bit_in <= '0'; wait for 10 ns;
+			bit_in <= '1'; wait for 10 ns;
+			
+			wait for 20 ns;
+	\end{lstlisting}
+	\end{frame}
+
+	\begin{frame}[fragile]{Lenguajes de Descripción de Hardware - VHDL Testbench}
+	\begin{lstlisting}
+			wait;
+			end process;
+			
+			end testbench;
+			
+	\end{lstlisting}
+	\end{frame}
+
+
+% Configuración visual para Verilog
+\lstset{
+	language=Verilog,
+	basicstyle=\ttfamily\footnotesize,
+	keywordstyle=\color{blue}\bfseries,
+	commentstyle=\color{gray},
+	stringstyle=\color{red},
+	numbers=left,
+	numberstyle=\tiny\color{gray},
+	stepnumber=1,
+	numbersep=5pt,
+	backgroundcolor=\color{white},
+	showspaces=false,
+	showstringspaces=false,
+	showtabs=false,
+	frame=single,
+	captionpos=b,
+	breaklines=true,
+	breakatwhitespace=true,
+	tabsize=2
+}
+
+	\begin{frame}[fragile]{Lenguajes de Descripción de Hardware - Verilog}
+	\begin{lstlisting}
+		module seq_detector (
+			input wire clk,
+			input wire rst,
+			input wire bit_in,
+			output reg seq_detected
+		);
+		
+		parameter 	S0 = 2'b00,
+					S1 = 2'b01,
+					S2 = 2'b10;
+		
+		reg [1:0] state, next_state;
+		
+		// Registro de estado
+		always @(posedge clk or posedge rst) begin
+			if (rst)
+				state <= S0;
+			else
+				state <= next_state;
+		end
+	\end{lstlisting}
+	\end{frame}
+
+
+	\begin{frame}[fragile]{Lenguajes de Descripción de Hardware - Verilog}
+	\begin{columns}[t]
+	\column{0.48\textwidth}
+	\begin{lstlisting}
+	// State transition and output logic
+	always @(*) begin
+		seq_detected = 0;
+		case (state)
+			S0: begin
+				if (bit_in)
+					next_state = S1;
+				else
+					next_state = S0;
+			end
+			S1: begin
+				if (!bit_in)
+					next_state = S2;
+				else
+					next_state = S1;
+			end
+	\end{lstlisting}
+	\column{0.48\textwidth}	
+	\begin{lstlisting}
+			S2: begin
+				if (bit_in) begin
+					next_state = S1;
+					seq_detected = 1;
+				end else
+					next_state = S0;
+			end
+			default: next_state = S0;
+		endcase
+	end
+	
+	endmodule
+	\end{lstlisting}
+	\end{columns}
+	\end{frame}
+
+
+	\begin{frame}[fragile]{Lenguajes de Descripción de Hardware - Verilog Testbench}
+	\begin{lstlisting}
+	`timescale 1ns/1ps
+	
+	module tb_seq_detector;
+		reg clk;
+		reg rst;
+		reg bit_in;
+		wire seq_detected;
+		
+		seq_detector dut (		// Module instance
+			.clk(clk),
+			.rst(rst),
+			.bit_in(bit_in),
+			.seq_detected(seq_detected)
+		);
+	
+		initial begin
+			clk = 0;
+			forever #5 clk = ~clk;
+		end
+	\end{lstlisting}
+	\end{frame}
+
+	\begin{frame}[fragile]{Lenguajes de Descripción de Hardware - Verilog Testbench}
+	\begin{lstlisting}
+	initial begin
+		rst = 1;
+		bit_in = 0;
+		#12;            
+		rst = 0;
+		#10 bit_in = 1; // ciclo 1
+		#10 bit_in = 0; // ciclo 2
+		#10 bit_in = 1; // ciclo 3  
+		#10 bit_in = 0; // ciclo 4 
+		#10 bit_in = 1; // ciclo 5
+		#20 $finish;
+		end
+		
+		initial begin
+			$monitor("Time=%0t | bit_in=%b | seq_detected=%b | state=%b", 
+						$time, bit_in, seq_detected, dut.state);
+		end
+	endmodule
+	\end{lstlisting}
+	\end{frame}
+
+
+% Definir el lenguaje SystemVerilog
+\lstdefinelanguage{SystemVerilog}{
+	morekeywords={
+		always, and, assign, automatic, begin, case, casex, casez, cell, config,
+		deassign, default, defparam, design, disable, edge, else, end, endcase, 
+		endconfig, endfunction, endgenerate, endmodule, endprimitive, endspecify, 
+		endtable, endtask, enum, event, for, force, forever, fork, function, generate,
+		genvar, if, ifnone, incdir, include, initial, inout, input, instance, integer,
+		join, liblist, library, localparam, macromodule, module, nand, negedge, nor,
+		noshowcancelled, not, notif0, notif1, or, output, parameter, pmos, posedge,
+		primitive, pull0, pull1, pulldown, pullup, rcmos, real, realtime, reg, release,
+		repeat, rnmos, rpmos, rtran, rtranif0, rtranif1, scalared, showcancelled,
+		signed, small, specify, specparam, strong0, strong1, supply0, supply1, table,
+		task, time, tran, tranif0, tranif1, unsigned, use, vectored, wait, wand, while,
+		wire, wor, xnor, xor, logic, bit, shortint, longint, byte, struct, union,
+		typedef, virtual, interface, modport, import, export
+	},
+	morecomment=[l]//,
+	morecomment=[s]{/*}{*/},
+	morestring=[b]",
+	sensitive=true
+}
+
+% Configuración visual
+\lstset{
+	language=SystemVerilog,
+	basicstyle=\ttfamily\footnotesize,
+	keywordstyle=\color{blue}\bfseries,
+	commentstyle=\color{gray},
+	stringstyle=\color{red},
+	numbers=left,
+	numberstyle=\tiny\color{gray},
+	stepnumber=1,
+	numbersep=5pt,
+	backgroundcolor=\color{white},
+	showspaces=false,
+	showstringspaces=false,
+	showtabs=false,
+	frame=single,
+	captionpos=b,
+	breaklines=true,
+	breakatwhitespace=true,
+	tabsize=2
+}
+
+
+	\begin{frame}[fragile]{Lenguajes de Descripción de Hardware - SystemVerilog}
+	\begin{lstlisting}
+		module seq_detector(
+			input wire clk,
+			input wire rst,
+			input wire bit_in,
+			output reg seq_detected
+		);
+		
+		typedef enum reg [1:0] { S0, S1, S2 } state_t;
+		state_t state, next_state;
+		
+		always @(posedge clk or posedge rst) begin
+			if (rst)
+				state <= S0;
+			else
+				state <= next_state;
+		end
+		
+		always @(*) begin
+			next_state = state;
+			seq_detected = 0;
+	\end{lstlisting}
+	\end{frame}
+
+	\begin{frame}[fragile]{Lenguajes de Descripción de Hardware - SystemVerilog}
+	\begin{lstlisting}
+			case (state)
+				S0: if (bit_in) next_state = S1;
+				S1: if (!bit_in) next_state = S2;
+				S2: begin
+					if (bit_in) begin
+						next_state = S1;
+						seq_detected = 1;
+					end else
+						next_state = S0;
+				end
+			endcase
+	end
+	endmodule	
+	\end{lstlisting}
+	\end{frame}
+
+
+	\begin{frame}[fragile]{Lenguajes de Descripción de Hardware - SystemVerilog Testbench}
+	\begin{lstlisting}[caption=Testebench del ejemplo en SystemVerilog]
+	module tb_seq_detector;
+		logic clk = 0, rst;
+		logic bit_in;
+		logic seq_detected;
+	
+		seq_detector uut (
+		.clk(clk), .rst(rst), .bit_in(bit_in), .seq_detected(seq_detected)
+		);
+		always #5 clk = ~clk;
+		
+		initial begin
+			rst = 1; bit_in = 0;
+			#10 rst = 0;
+			
+			// Test sequence: 1 0 1
+			bit_in = 1; #10;
+			bit_in = 0; #10;
+			bit_in = 1; #10;
+	\end{lstlisting}
+	\end{frame}
+
+
+	\begin{frame}[fragile]{Lenguajes de Descripción de Hardware - SystemVerilog Testbench}
+	\begin{lstlisting}
+			// Expected: seq_detected = 1
+			$display("Detected: %b", seq_detected);
+			$finish;
+		end
+	endmodule
+	\end{lstlisting}
+	\end{frame}
+
+
+% Definición para SystemC (extiende C++)
+\lstdefinelanguage{SystemC}[]{C++}{
+	morekeywords={
+		sc_module, sc_main, SC_CTOR, SC_METHOD, SC_THREAD,
+		sc_in, sc_out, sc_signal, sc_clock,
+		wait, sensitive, true, false
+	}
+}
+
+% Configuración visual
+\lstset{
+	language=SystemC,
+	basicstyle=\ttfamily\footnotesize,
+	keywordstyle=\color{blue}\bfseries,
+	commentstyle=\color{gray},
+	stringstyle=\color{red},
+	numbers=left,
+	numberstyle=\tiny\color{gray},
+	stepnumber=1,
+	numbersep=5pt,
+	backgroundcolor=\color{white},
+	showspaces=false,
+	showstringspaces=false,
+	showtabs=false,
+	frame=single,
+	captionpos=b,
+	breaklines=true,
+	breakatwhitespace=true,
+	tabsize=2
+}
+
+	\begin{frame}[fragile]{Lenguajes de Descripción de Hardware - SystemC}
+	\begin{lstlisting}
+		// File: seq_detector.h
+			#ifndef SEQ_DETECTOR_H
+			#define SEQ_DETECTOR_H
+			
+			#include <systemc.h>
+			
+			SC_MODULE(SeqDetector) {
+					// Puertos
+					sc_in<bool> clk;
+					sc_in<bool> rst;
+					sc_in<bool> bit_in;
+					sc_out<bool> seq_detected;
+					
+					// Estados internos (FSM)
+					enum State { S0, S1, S2 };
+					sc_signal<State> state; 
+		\end{lstlisting}
+		\end{frame}
+		
+	\begin{frame}[fragile]{Lenguajes de Descripción de Hardware - SystemC}
+	\begin{lstlisting}
+			// Proceso principal
+			void process_fsm() {
+				if (rst.read()) {
+					state.write(S0);
+					seq_detected.write(false);
+				} else if (clk.posedge()) {
+				State current_state = state.read();
+				bool next_detected = false;
+				State next_state = current_state;
+	\end{lstlisting}
+	\end{frame}
+			
+\begin{frame}[fragile]{Lenguajes de Descripción de Hardware - SystemC}
+		\begin{lstlisting}
+			switch (current_state) {
+				case S0:
+				next_state = (bit_in.read()) ? S1 : S0;
+				break;
+				case S1:
+				next_state = (!bit_in.read()) ? S2 : S1;
+				break;
+				case S2:
+				if (bit_in.read()) {
+					next_state = S1;
+					next_detected = true;
+				} else {
+					next_state = S0;
+				}
+				break;
+			}
+	\end{lstlisting}
+\end{frame}
+				
+\begin{frame}[fragile]{Lenguajes de Descripción de Hardware - SystemC}
+	\begin{lstlisting}
+						
+				state.write(next_state);
+				seq_detected.write(next_detected);
+			}
+		}
+
+		// Constructor
+		SC_CTOR(SeqDetector) {
+			SC_METHOD(process_fsm);
+			sensitive << clk.pos();
+			sensitive << rst;
+		}
+	};
+		
+	#endif
+	\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Lenguajes de Descripción de Hardware - SystemC Testbench}
+	\begin{lstlisting}
+	#include <systemc.h>
+	#include "seq_detector.h"
+	
+	int sc_main(int argc, char* argv[]) {
+		// Signals
+		sc_signal<bool> rst;
+		sc_signal<bool> bit_in;
+		sc_signal<bool> seq_detected;
+		sc_clock clk("clk", 10, SC_NS);  // Reloj de 10 ns
+		
+		SeqDetector uut("uut");		// Instancia del modulo
+		uut.clk(clk);
+		uut.rst(rst);
+		uut.bit_in(bit_in);
+		uut.seq_detected(seq_detected);
+		
+		// Trazado de signals (opcional)
+		sc_trace_file *wf = sc_create_vcd_trace_file("waveform");
+		sc_trace(wf, clk, "clk");
+		sc_trace(wf, rst, "rst");
+		sc_trace(wf, bit_in, "bit_in");
+		sc_trace(wf, seq_detected, "seq_detected");
+	
+	\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Lenguajes de Descripción de Hardware - SystemC Testbench}
+	\begin{lstlisting}
+			// Simulacion
+			rst = 1;
+			bit_in = 0;
+			sc_start(12, SC_NS);  // primer ciclo
+			
+			rst = 0;
+			
+			// Aplicamos secuencia: 1 0 1 se debe detectar en el tercer bit
+			bit_in = 1; sc_start(10, SC_NS);
+			bit_in = 0; sc_start(10, SC_NS);
+			bit_in = 1; sc_start(10, SC_NS);  // Aqui debe detectarse
+			
+			// Mas estimulos
+			bit_in = 0; sc_start(10, SC_NS);
+			bit_in = 1; sc_start(10, SC_NS);
+			bit_in = 1; sc_start(10, SC_NS);
+			bit_in = 0; sc_start(10, SC_NS);
+			bit_in = 1; sc_start(10, SC_NS);  // Otro '101'
+			
+			sc_close_vcd_trace_file(wf);
+			
+			return 0;
+		}
+		
+	\end{lstlisting}
+\end{frame}
+
+
+% Configuración para el código
+\lstset{
+	language=C++,
+	basicstyle=\ttfamily\scriptsize,
+	keywordstyle=\color{blue},
+	commentstyle=\color{gray},
+	stringstyle=\color{orange},
+	showstringspaces=false,
+	breaklines=true,
+	frame=single,
+	numbers=left,
+	numberstyle=\tiny,
+	tabsize=2
+}
+
+
+\begin{frame}[fragile]{C++ cuasi-HDL}
+\begin{columns}[t]
+	\column{0.48\textwidth}
+\begin{lstlisting}
+#include <iostream>
+#include <vector>
+
+enum State { S0, S1, S2 };
+
+class SeqDetector {
+	private:
+	State state;
+	bool seq_detected;
+	
+	public:
+	SeqDetector() {
+		reset();
+	}
+	
+	void reset() {
+		state = S0;
+		seq_detected = false;
+	}
+\end{lstlisting}
+
+	\column{0.48\textwidth}
+\begin{lstlisting}
+	void clock_tick(bool bit_in) {
+		seq_detected = false;
+		switch (state) {
+			case S0:
+			state = (bit_in) ? S1 : S0;
+			break;
+			case S1:
+			state = (!bit_in) ? S2 : S1;
+			break;
+			case S2:
+			if (bit_in) {
+				state = S1;
+				seq_detected = true;
+			} else {
+				state = S0;
+			}
+			break;
+		}
+	}
+\end{lstlisting}
+\end{columns}
+\end{frame}
+
+
+\begin{frame}[fragile]{C++ cuasi-HDL}
+	\begin{lstlisting}
+		
+	bool output() const {
+		return seq_detected;
+	}
+	
+	std::string state_str() const {
+		switch (state) {
+			case S0: return "S0";
+			case S1: return "S1";
+			case S2: return "S2";
+		}
+		return "ERROR";
+	}
+	};
+		
+	\end{lstlisting}
+\end{frame}
+
+
+\begin{frame}[fragile]{C++ cuasi-HDL- Testbench}
+	\begin{lstlisting}%[caption=Ejemplo en C++, captionpos=b, numberbychapter=false]
+int main() {
+	SeqDetector fsm;
+	
+	std::vector<bool> input_sequence = {1, 0, 1, 0, 1, 1, 0, 1};
+	std::cout << "Time | In | State | Detected\n";
+	std::cout << "-----------------------------\n";
+	
+	for (size_t t = 0; t < input_sequence.size(); ++t) {
+		bool bit_in = input_sequence[t];
+		fsm.clock_tick(bit_in);
+		std::cout << "  " << t << "   | " << bit_in << "  | "
+		<< fsm.state_str() << "   |   "
+		<< fsm.output() << "\n";
+	}
+	
+	return 0;
+}
+		
+	\end{lstlisting}
+\end{frame}
+
+\begin{frame}{Lenguajes de Descripción de Hardware - Resumen}
+	
+	 \textbf{VHDL}:
+	 \begin{itemize}
+	 	\item Fuertemente tipeado (ADA-like verbose syntax)
+	 	\item Muy estricto en tipos
+	 	\item Considerado más robusto por algunos ingenieros
+	 \end{itemize}
+	
+	\textbf{Verilog}:
+	 \begin{itemize}
+		\item Lenguage clásico HDL
+		\item Sintaxis similar a C
+		\item No tiene muchas características modernas como typedef, class o interface
+	\end{itemize}
+
+	\textbf{SystemVerilog}:
+	 \begin{itemize}
+		\item Extiende Verilog con mejoras como logic, enum, typedef, interface, class, randomization, etc.
+		\item Sintaxis compatible con Verilog, pero más poderoso para testbenches y sistemas complejos
+		\item Permite diseño orientado a objetos (especialmente en verificación)
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Lenguajes de Descripción de Hardware - Resumen}
+	
+	\textbf{SystemC}:
+	\begin{itemize}
+		\item Mayor Abstracción
+		\item Diseño de Hardware y Software Conjunto
+		\item Exploración de Arquitecturas
+		\item Productividad
+		\item Simulación Rápida
+		\item Flexibilidad
+	\end{itemize}
+	
+		\note{
+			\begin{itemize}
+			\item Mayor Abstracción:
+			SystemC opera a un nivel más alto de abstracción que VHDL y Verilog, lo que permite a los diseñadores centrarse en la funcionalidad del sistema en lugar de los detalles de implementación.
+			\item Diseño de Hardware y Software Conjunto:
+			SystemC facilita el modelado y la verificación conjunta de hardware y software, lo que puede llevar a un mejor diseño del sistema y a la identificación temprana de problemas.
+			\item Exploración de Arquitecturas:
+			La alta abstracción y la capacidad de modelado flexible de SystemC permiten una exploración más eficiente de diferentes arquitecturas y la distribución de funcionalidades entre hardware y software.
+			\item Productividad:
+			La capacidad de modelar a un nivel más alto de abstracción puede aumentar la productividad del diseño y reducir el tiempo de desarrollo.
+			\item Simulación Rápida:
+			SystemC ofrece simulaciones más rápidas que VHDL y Verilog debido a su mayor nivel de abstracción.
+			\item Flexibilidad:
+			SystemC es un lenguaje versátil que puede utilizarse para modelar tanto a nivel de sistema como a nivel de transferencia de registros (RTL). 
+		\end{itemize}
+			
+			Desventajas:
+		\begin{itemize}
+			\item Curva de Aprendizaje:
+			Aunque SystemC puede ser más fácil de aprender para aquellos con experiencia en programación en C++, puede tener una curva de aprendizaje más pronunciada para aquellos que están familiarizados con VHDL o Verilog, especialmente en lo que respecta a la programación orientada a objetos.
+			\item Herramientas de Síntesis:
+			Aunque las herramientas de síntesis basadas en SystemC están mejorando, pueden ser menos maduras y sofisticadas que las disponibles para VHDL y Verilog.
+			\item Popularidad:
+			Aunque SystemC está ganando popularidad, especialmente en Asia y Europa, su adopción no es tan generalizada como la de VHDL y Verilog en la industria. 
+		\end{itemize}
+			}
+\end{frame}
+
+\begin{frame}{Lenguajes de Descripción de Hardware - Resumen}
+	Ventajas de los Lenguajes de Descripción de Hardware (HDL)\newline
+	\begin{itemize}
+		\item \textbf{Design Verification}: permiten la verificación funcional temprana de los diseños. Los diseñadores trabajan a nivel de transferencia de registros (RTL), optimizando y modificando la descripción RTL hasta que cumpla con la funcionalidad deseada, lo que ayuda a eliminar la mayoría de los errores de diseño
+		\item \textbf{Simulation}: permiten simular diseños, lo que posibilita realizar pruebas exhaustivas antes de su implementación en hardware
+		\item \textbf{Parallel Programming}: VHDL (Very High-Speed Integrated Circuit Hardware Description Language, lenguaje de descripción de hardware para circuitos integrados de muy alta velocidad) también puede servir como lenguaje de programación paralelo de uso general
+	\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Lenguajes de Descripción de Hardware - Resumen}	
+	Desventajas de los Lenguajes de Descripción de Hardware (HDL) \newline
+	\begin{itemize}
+		\item \textbf{Learning Curve}: tienen una curva de aprendizaje pronunciada para los principiantes debido a su sintaxis y conceptos específicos.
+		\item \textbf{Debugging Challenges}: La depuración de diseños basados en HDL puede resultar compleja, especialmente cuando se trata de circuitos de gran tamaño.
+		\item \textbf{Limited Visualization}: A diferencia de los diseños basados en esquemas, los HDL carecen de representaciones visuales, lo que dificulta la visualización del circuito.
+		\item \textbf{Hardware Constraints}: Los HDL no siempre convierten perfectamente hardware real, y ciertas construcciones pueden no ser sintetizables.
+	\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Lenguajes de Software - Resumen}
+	Ventajas de los Lenguajes de Software\newline
+	\begin{itemize}
+		\item \textbf{Versatility}: Los lenguajes de programación pueden utilizarse para una amplia gama de aplicaciones más allá del diseño de hardware.
+		\item \textbf{Abstraction}: Los lenguajes de programación de alto nivel proporcionan abstracción, lo que facilita la expresión de algoritmos y lógica complejos.
+		\item \textbf{Rich Libraries}: Los lenguajes de programación ofrecen amplias bibliotecas y marcos de trabajo para diversas tareas.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Lenguajes de Software - Resumen}
+	Desventajas de los Lenguajes de Software\newline
+	\begin{itemize}
+		\item \textbf{Performance Overhead}: Los lenguajes interpretados pueden tener una sobrecarga de rendimiento en comparación con los lenguajes de bajo nivel como C o lenguaje ensamblador.
+		\item \textbf{Resource Consumption}: Las aplicaciones de software consumen recursos del sistema (CPU, memoria), lo que afecta al rendimiento general del sistema.
+		\item \textbf{Security Risks}: Los lenguajes de programación pueden introducir vulnerabilidades de seguridad si no se manejan con cuidado.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Puntos claves: Concurrency}
+	La concurrencia, en el contexto de la programación, se refiere a la capacidad de un programa para descomponerse en partes que pueden ejecutarse de forma independiente entre sí.
+\end{frame}
+
+\begin{frame}{Puntos claves: Concurrency}
+
+	\textbf{HDLs}:
+	\begin{itemize}
+		\item La concurrencia en la descripción del hardware se refiere a la ejecución simultánea de múltiples operaciones dentro de un circuito digital.
+		\item Modelan la naturaleza paralela de las operaciones del hardware, donde las señales se propagan a través de diferentes caminos simultáneamente y los componentes interactúan entre sí en paralelo.
+		\item VHDL y Verilog admiten de forma inherente la ejecución concurrente, lo cual es crucial para simular cómo funcionan simultáneamente las diferentes partes de un circuito.
+		\item Los HDL incluyen construcciones (procesos en VHDL, bloques always en Verilog) para modelar el comportamiento concurrente.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Puntos claves: Concurrency}
+	\textbf{GPLs}:
+	\begin{itemize}
+		\item Suelen ejecutar instrucciones de forma secuencial, aunque el paralelismo y la concurrencia pueden lograrse explícitamente mediante hilos (threads), procesos o técnicas de programación asíncrona.
+		\item Sin embargo, operan a un nivel más alto de abstracción y son gestionadas por el programador.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Puntos claves: Timing}
+	
+	\textbf{HDLs}:
+	\begin{itemize}
+		\item El estado de tiempos en la descripción del hardware se refiere a los retrasos de propagación y las restricciones de sincronización asociados con las transiciones de señales y las interacciones de los componentes dentro de un circuito digital.
+		\item Proporcionan construcciones de tiempo para especificar restricciones de sincronización y retrasos, reflejando el comportamiento en tiempo real de los circuitos digitales.
+		\item La información de sincronización es fundamental para la simulación y síntesis precisas de los diseños de hardware. 
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Puntos claves: Timing}
+	\textbf{GPLs}:
+	\begin{itemize}
+		\item Las consideraciones de temporización en los GPL suelen gestionarse en un nivel de abstracción superior, por ejemplo, mediante funciones de suspensión o retardo, o se abstraen por completo en las aplicaciones de software.
+		\item No disponen de construcciones integradas para especificar restricciones de temporización al nivel de los HDL.
+		\item La información de temporización en los GPL es gestionada por el sistema operativo y no refleja directamente el comportamiento de temporización de los circuitos digitales.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Puntos claves: Applications}
+	
+	\textbf{HDLs}:
+	\begin{itemize}
+		\item Incluyen amplias funciones para la simulación y la verificación. Los ingenieros crean testbenches y herramientas de simulación para validar el comportamiento de los diseños de hardware en diferentes escenarios.
+		\item Las herramientas de síntesis convierten las descripciones HDL en implementaciones a nivel de compuertas, que luego se utilizan para fabricar el hardware real.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Puntos claves: Applications}
+	\textbf{GPLs}:
+	\begin{itemize}
+		\item Se centran en la corrección, la eficiencia y la funcionalidad de los algoritmos. Los desarrolladores utilizan herramientas de depuración, frameworks de pruebas y herramientas de análisis de código para garantizar la calidad del software.
+	\end{itemize}
+\end{frame}
+
+\section{Programación dirigida por eventos}
+	\begin{frame}{Programación controlada por eventos}
+		\centering
+		\textbf{Programación Controlada por Eventos}\\
+		\centering
+		\textbf{Event-Driven Programming - (EDP)}
+		
+	\end{frame}
+	
+
+\begin{frame}{Programación controlada por eventos}
+	\centering
+	\textbf{“Un evento es un hecho inmutable, algo que ha sucedido en el pasado y que no se puede cambiar”.}\\
+	
+	\vspace{0.7cm}
+	Un evento es un tipo de mensaje. Los mensajes pueden clasificarse en:
+	
+	\vspace{0.7cm}
+	
+	% Coordenadas relativas a la página (0 a 1)
+	\begin{columns}[T,onlytextwidth]
+		\column{0.32\textwidth}
+		\begin{tcolorbox}[colback=blue!10, colframe=blue!80!black]
+			Commands
+		\end{tcolorbox}
+		
+		\column{0.32\textwidth}
+		\begin{tcolorbox}[colback=green!10, colframe=green!60!black]
+			Events
+		\end{tcolorbox}
+		
+		\column{0.32\textwidth}
+		\begin{tcolorbox}[colback=red!10, colframe=red!70!black]
+			Queries
+		\end{tcolorbox}
+	\end{columns}
+	
+\end{frame}	
+	
+
+\begin{frame}{Programación controlada por eventos}
+	
+	\begin{center}
+		\begin{tikzpicture}[
+			node distance=1.0cm and 1.8cm,
+			every node/.style={font=\small},
+			box/.style={draw=green!40!black, minimum width=2.8cm, minimum height=1cm, align=center},
+			arrow/.style={thick, ->, >=Stealth, draw=green!50!black}
+			]
+			
+			% Nodos
+			\node[box] (dispatcher) {dispatcher};
+			\node[box, below left=of dispatcher] (handler1) {handler 1};
+			\node[box, below=of dispatcher] (handler2) {handler 2};
+			\node[box, below right=of dispatcher] (handlern) {handler n};
+			
+			% Texto "events"
+			\node[above=0.4cm of dispatcher] (events) {\textcolor{green!50!black}{\textbf{events}}};
+			
+			% Flechas
+			\draw[->, thick] (events) -- (dispatcher);
+			\draw[->, thick] (dispatcher.south west) -- (handler1.north);
+			\draw[->, thick] (dispatcher.south) -- (handler2.north);
+			\draw[->, thick] (dispatcher.south east) -- (handlern.north);
+			
+			% Puntos suspensivos
+			\node[xshift=3cm, yshift=-2.5cm] at ($(handler2)!0.5!(handlern)$) {\Large $\cdots$};
+			
+			% Texto debajo
+			\node[below=3.2cm of dispatcher] {\textbf{\textcolor{blue!50!black}{\textsc{Handlers pattern}}}};
+			
+		\end{tikzpicture}
+	\end{center}
+\end{frame}	
+
+
+\begin{frame}[fragile]{Programación controlada por eventos}
+	
+	\begin{lstlisting}[language=,basicstyle=\ttfamily\tiny]
+	#	
+	do forever: 	# the event loop
+		 get an event from the input stream
+		 
+		 if event type == EndOfEventStream :
+		 	quit # break out of event loop
+		 if event type == ... :
+		 	call the appropriate handler subroutine, passing it event information as an argument
+		 elif event type == ... :
+		 	call the appropriate handler subroutine, passing it event information as an argument
+		 else:    	# handle an unrecognized type of event
+		 	ignore the event, or raise an exception
+	#	 	
+		 
+	\end{lstlisting}
+\end{frame}
+
+\begin{frame}{Programación controlada por eventos}
+	\textbf{Event queue}
+	
+	\begin{figure}[htb]
+		\centering
+		\includegraphics[width=0.9\textwidth]{images/Event_queue}
+	\end{figure}
+
+	
+	\note{
+	En algunos casos, el dispacher y sus controladores (handlers) podrían no ser capaces de gestionar los eventos tan rápido como llegan. En tales casos, la solución consiste en almacenar en un búfer el flujo de entrada de eventos mediante la introducción de una cola (queue) de eventos en dicho flujo, entre el generador de eventos y el dispacher. Los eventos se añaden al final de la cola tan rápido como llegan, y el dispacher los retira del principio tan rápido como le es posible.\newline
+	Las aplicaciones GUI suelen incluir una cola de eventos. Eventos importantes, como los clics del ratón, pueden requerir cierto tiempo para su gestión. Mientras tanto, otros eventos, como los de movimiento del ratón, pueden acumularse en el búfer. Cuando el dispacher vuelve a estar libre, puede descartar rápidamente los eventos de movimiento del ratón que se pueden ignorar y vaciar la cola de eventos rápidamente.
+	}
+	
+\end{frame}	
+
+\begin{frame}{Arquitecturas controladas por eventos}
+	\begin{itemize}
+		\item Arquitectura Cliente-Servidor
+		\item Sistemas de mensajería
+		\item OOP
+	\end{itemize}
+\end{frame}	
+
+
+\begin{frame}{Arquitecturas controladas por eventos}
+	\textbf{Arquitectura Cliente-Servidor}
+	\begin{figure}[htb]
+		\centering
+		\includegraphics[width=0.5\textwidth]{images/consumer}
+	\end{figure}
+\end{frame}	
+
+\begin{frame}{Arquitecturas controladas por eventos}
+	\textbf{Sistema de mensajería}
+	
+	\begin{center}
+		\begin{minipage}{0.7\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{images/messaging.png}
+			%\captionof{figure}{Figura 1}
+		\end{minipage}
+		\hfill
+		\begin{minipage}{0.7\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{images/messaging2.png}
+			%\captionof{figure}{Figura 2}
+		\end{minipage}
+	\end{center}
+	
+\end{frame}	
+
+\begin{frame}{Arquitecturas controladas por eventos}
+	\textbf{Object-Oriented Event-Driven Programming}
+	\begin{figure}[htb]
+		\centering
+		\includegraphics[width=0.75\textwidth]{images/OOP}
+	\end{figure}
+\end{frame}	
+
+
+\begin{frame}{Arquitecturas controladas por eventos}
+	\textbf{Frameworks}\newline
+\\El término general para una pieza de software que funciona de esta manera (que define puntos de conexión y requiere complementos (plug-ins) es ``framework''. Estas son algunas de las definiciones que encontrará si busca ``framework'' en Google. \\Cada definición captura parte del concepto de un framework. 
+
+\end{frame}
+
+\begin{frame}{Arquitecturas controladas por eventos - Frameworks}
+	 Un framework es:
+	\begin{itemize}
+		\item una estructura básica que soporta o engloba algo más.
+		\item una visión general, esquema o esqueleto, dentro del cual se pueden añadir detalles.
+		\item un entorno de software extensible que se puede adaptar a las necesidades de un dominio específico.
+		\item un conjunto de clases que proporciona una solución general a un problema de aplicación. Un framework suele perfeccionarse para abordar el problema específico mediante la especialización o mediante tipos o clases adicionales.
+		\item Un componente que permite extender su funcionalidad mediante la escritura de módulos complememtarios (``extensiones del framework''). El desarrollador de extensiones escribe clases derivadas de las interfaces definidas por el framework.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Arquitecturas controladas por eventos - Frameworks}
+	Un framework es: (continuación) \newline
+	
+	\begin{itemize}
+		\item Un conjunto de software diseñado para una alta reutilización, con plug-points específicos para la funcionalidad requerida por un sistema en particular. Una vez proporcionados los plug-points, el sistema mostrará un comportamiento centrado en ellos.
+	\end{itemize}
+	\vspace{0.7cm}
+	El patrón que subyace al concepto de un framework es el patrón Handlers. Las extensiones del framework o complementos son controladores de eventos.
+	
+\end{frame}
+
+\begin{frame}{Arquitecturas controladas por eventos - Frameworks}
+	\begin{figure}[htb]
+		\centering
+		\includegraphics[width=0.75\textwidth]{images/Frameworks}
+	\end{figure}
+\end{frame}
+
+
+\begin{frame}{Programación controlada por eventos}
+	
+	``La mayoría, si no todos, los sistemas y kits de herramientas GUI están diseñados para ser controlados por eventos, lo que significa que el flujo principal de su programa no es secuencial de principio a fin. Si nunca ha programado con GUI, este es uno de los cambios de paradigma más complejos.''\newline
+	— Robin Dunn, hablando sobre programación GUI en OSCON2004\newline
+	
+	``Principio de Hollywood: "No nos llame; nosotros le llamaremos"... Implementa las interfaces, se registra. Se le llama cuando es el momento adecuado. Esto requiere una forma de pensar muy diferente a la que se enseña en la programación introductoria, donde el estudiante dicta el flujo de control.''\newline
+	— Dafydd Rees, http://c2.com/cgi/wiki?HollywoodPrinciple
+	
+\end{frame}	
+
+
+\begin{frame}{Programación controlada por eventos}
+	\textbf{Next ...}\newline
+
+	\textbf{HALCON Simulator}
+\end{frame}	
+
+
+\begin{frame}{Programación controlada por eventos}
+	\Huge
+	\centering
+	¿Preguntas?
+\end{frame}	
+
+%	
+%\section{Utilizando C++ y Python}
+%	\begin{frame}{Utilizando C++ y Python}
+%		Breve descripción de Lenguajes de Descripción de Hardware. Comparativa
+%	\end{frame}
+%	
+%\section{Simulador HALCON - Getting started}
+%	\begin{frame}{Simulador HALCON - Getting started}
+%		Breve descripción de Lenguajes de Descripción de Hardware. Comparativa
+%	\end{frame}
+%	
+%\section{Ejemplo 1}
+%	\begin{frame}{Ejemplo 1}
+%		Breve descripción de Lenguajes de Descripción de Hardware. Comparativa
+%	\end{frame}
+%	
+%\section{Ejemplo 2}
+%	\begin{frame}{Ejemplo 2}
+%		Breve descripción de Lenguajes de Descripción de Hardware. Comparativa
+%	\end{frame}
+%
+%\section{Ejemplo 3}
+%	\begin{frame}{Ejemplo 3}
+%		Breve descripción de Lenguajes de Descripción de Hardware. Comparativa
+%	\end{frame}
+%
+%\section{Ejemplo 4}
+%	\begin{frame}{Ejemplo 4}
+%		Breve descripción de Lenguajes de Descripción de Hardware. Comparativa
+%	\end{frame}
+%
+%\section{Trabajo Final. Propuestas e Inicio implementación.}
+%\section{Trabajo Final. Implementación}
+%	
+%	
+%%
+%%	
+%%	\begin{frame}{Definiciones, Teoremas, Corolarios e Ejemplos}
+%%		\begin{block}{Definición 2.1.1}
+%%			Aquí tenemos una nueva definición
+%%		\end{block}
+%%		
+%%		\begin{block}{Teorema 2.1.2}
+%%			Aquí tenemos un nuevo teorema
+%%		\end{block}
+%%		
+%%		\begin{block}{Ejemplo 2.1.3}
+%%			Aquí tenemos un nuevo ejemplo.
+%%		\end{block}
+%%		
+%%		\begin{block}{Corolario 2.1.4}
+%%			Aqui tenemos un nuevo corolario.
+%%		\end{block}
+%%	\end{frame}
+%%	
+%%	\begin{frame}{Citas de las referencias}
+%%		Libro de Análisis Real~\cite{lima2004analise}
+%%	\end{frame}
+%%	
+%%	\begin{frame}{Listas}
+%%		Ejemplo de lista con símbolos:
+%%		
+%%		\begin{itemize}
+%%			\item Primer elemento
+%%			\item Segundo elemento
+%%		\end{itemize}
+%%		
+%%		\bigskip
+%%		
+%%		Ejemplo de lista con items enumerados:
+%%		
+%%		\begin{enumerate}
+%%			\item Primer elemento
+%%			\item Segundo elemento
+%%		\end{enumerate}
+%%	\end{frame}
+%%	
+%%	\begin{frame}{Tablas}
+%%		A Tabla muestra un modelo de tabla.
+%%		
+%%		\begin{table}[htb]
+%%			\caption{Ejemplo de tabla}
+%%			\label{tab:modelo_tabla}
+%%			\centering
+%%			\begin{tabular}{c|c|c|c}
+%%				\hline
+%%				\textbf{Persona} & \textbf{Edad} & \textbf{Peso} & \textbf{Altura} \\ \hline
+%%				Marcos & 26    & 68   & 178    \\ \hline
+%%				Ivone  & 22    & 57   & 162    \\ \hline
+%%				Sueli  & 40    & 65   & 153    \\ \hline
+%%			\end{tabular}
+%%			
+%%			\medskip
+%%			
+%%			Fuente: Producción del propio autor.
+%%		\end{table}
+%%	\end{frame}
+%%	
+%%	\begin{frame}{Imagenes}
+%%		La Figura muestra el logomarca promocional de Universidade Federal do Espírito Santo (UFES).
+%%		
+%%		\begin{figure}[htb]
+%%			\caption{Logomarca Promocional UFES}
+%%			\label{fig:logo_UFES}
+%%			\centering
+%%			\includegraphics[width=0.5\textwidth]{imagens/logomarca_UFES}
+%%			
+%%			\medskip
+%%			
+%%			Fuente: Producción del propio autor.
+%%		\end{figure}
+%%	\end{frame}
+%%	
+%%	\begin{frame}{Conclusión}
+%%		Texto referente a la conclusión.
+%%	\end{frame}
+%%	
+%%	\begin{frame}{Trabajos a futuro}
+%%		\begin{itemize}
+%%			\item Estudiar $\ldots$
+%%			
+%%			\medskip
+%%			
+%%			\item Explorar $\ldots$
+%%			
+%%			\medskip
+%%			
+%%			\item Analizar $\ldots$
+%%		\end{itemize}
+%%	\end{frame}
+%%	
+%%	\section{Referencias}
+%%	\begin{frame}[allowframebreaks]{Referencias}
+%%		\bibliography{referencias}
+%%	\end{frame}
+%%	
+%%	\begin{frame}
+%%		
+%%		\begin{center}
+%%			Gracias!
+%%			
+%%			\email
+%%		\end{center}
+%%		
+%%		\begin{figure}[htb]
+%%			\centering
+%%			\includegraphics[width=0.5\textwidth]{imagens/IB}
+%%		\end{figure}
+%%		
+%%	\end{frame}
+	
+\end{document}

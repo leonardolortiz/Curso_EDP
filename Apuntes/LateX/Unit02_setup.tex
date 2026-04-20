@@ -1,0 +1,295 @@
+\documentclass[11pt]{beamer}
+\usetheme{Madrid}
+\usefonttheme{serif}
+
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage[T1]{fontenc}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx, xcolor}
+\usepackage{listings}
+
+\usepackage[absolute,overlay]{textpos}
+\usepackage[most]{tcolorbox}
+
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, calc}
+
+\tikzstyle{startstop} = [rectangle, rounded corners, minimum width=3cm, minimum height=1cm,text centered, draw=black, fill=red!30]
+\tikzstyle{process} = [rectangle, minimum width=3cm, minimum height=1cm, text centered, draw=black, fill=blue!20]
+\tikzstyle{decision} = [diamond, aspect=2, minimum width=3.5cm, minimum height=1cm, text centered, draw=black, fill=yellow!40]
+\tikzstyle{arrow} = [thick, ->, >=Stealth]
+
+
+\DeclareMathOperator{\sen}{sen}
+\DeclareMathOperator{\tg}{tg}
+
+\setbeamertemplate{caption}[numbered]
+
+%\setbeameroption{show notes on second screen=right}  % También puedes usar: show notes on second screen=right
+
+\author[LLO]{Ing. Leonardo Luis Ortiz}
+\title{Instalación del Simulador HALCON}
+% Informe su email de contato o comando a seguir
+% Por ejemplo, alcebiades.col@ufes.br
+\newcommand{\email}{leonardo.ortiz@ib.edu.ar}
+%\setbeamercovered{transparent} 
+\setbeamertemplate{navigation symbols}{} 
+\logo{\includegraphics[scale=0.08]{images/IB.png}} 
+\institute[]{Instituto Balseiro \par Centro Atómico Bariloche} 
+\date{\today} 
+%\subject{}
+
+% ---------------------------------------------------------
+% Selecione un estilo de referencia
+\bibliographystyle{apalike}
+
+%\bibliographystyle{abbrv}
+%\setbeamertemplate{bibliography item}{\insertbiblabel}
+% ---------------------------------------------------------
+
+% ---------------------------------------------------------
+% Incluir los slides 
+%\usepackage[spanish,hyperpageref]{backref}
+
+%\renewcommand{\backrefpagesname}{Cita de página(s):~}
+%\renewcommand{\backref}{}
+%\renewcommand*{\backrefalt}[4]{
+	%	\ifcase #1 %
+	%		Sin citas en el texto.%
+	%	\or
+	%		Citado en la página #2.%
+	%	\else
+	%		Citado #1 veces en las páginas #2.%
+	%	\fi}%
+% ---------------------------------------------------------
+%% Configuración para el código
+%\lstset{
+%	language=C++,
+%	basicstyle=\ttfamily\scriptsize,
+%	keywordstyle=\color{blue},
+%	commentstyle=\color{gray},
+%	stringstyle=\color{orange},
+%	showstringspaces=false,
+%	breaklines=true,
+%	frame=single,
+%	numbers=left,
+%	numberstyle=\tiny,
+%	tabsize=2
+%}
+
+% Estilo para VHDL
+\lstdefinelanguage{VHDL}{
+	morekeywords={
+		library,use,all,entity,is,port,in,out,end,architecture,of,begin,
+		signal,process,if,then,else,elsif,wait,until,when,others
+	},
+	sensitive=true,
+	morecomment=[l]--,
+	morestring=[b]"
+}
+
+\lstset{
+	language=VHDL,
+	basicstyle=\ttfamily\scriptsize,
+	keywordstyle=\color{blue},
+	commentstyle=\color{gray},
+	stringstyle=\color{orange},
+	showstringspaces=false,
+	breaklines=true,
+	frame=single,
+	numbers=left,
+	numberstyle=\tiny,
+	tabsize=2,
+	captionpos=b
+}
+
+
+\begin{document}
+	
+	\begin{frame}
+		\titlepage
+	\end{frame}
+	
+	\begin{frame}{Contenido}
+		\tableofcontents 
+	\end{frame}
+	
+	\section{Instalación del Simulador HALCON}
+	
+	\begin{frame}{HALCON}
+		\begin{figure}[htb]
+			\centering
+			\includegraphics[width=0.9\textwidth]{images/2_HALCON_logo}
+		\end{figure}
+	\end{frame}
+	
+	\begin{frame}{HALCON}
+		\textbf{HALCON} es un proyecto de código abierto desarrollado por Patricio Reus Merlo que consiste en un conjunto de herramientas desarrolladas en C++20 y Python3 que permiten a los usuarios diseñar y verificar arquitecturas de procesamiento digital de señales (DSP) desde las primeras etapas de diseño (alto nivel) hasta la implementación digital (RTL).
+	\end{frame}
+	
+	\begin{frame}[fragile]{HALCON - Instalación}
+		Los requerimientos más importantes son Docker y Git. Obviamente es necesario tener instalado un editor de texto y en el caso de utilizar Windows, también hay que instalar WSL. \newline
+			
+	\begin{enumerate}
+	\item Instalar \textbf{WSL}:
+		\begin{itemize}
+			\item Ubuntu: no hace falta
+			\item Windows
+		\end{itemize}
+	
+	\item Instalar \textbf{Git}:
+		\begin{itemize}
+			\item Ubuntu: no hace falta
+			\item Windows: aunque es opcional, se puede hacer desde WSL
+		\end{itemize}
+	
+	\item Instalar \textbf{Docker}:
+		\begin{itemize}
+		\item Ubuntu:
+		\begin{lstlisting}
+		curl -fsSL https://get.docker.com -o get-docker.sh
+		sudo sh get-docker.sh
+		sudo docker run hello-world
+		\end{lstlisting}
+		\item Windows: también hay que activar el uso de Docker en WSL
+		\end{itemize}
+	\end{enumerate}
+	\end{frame}
+	
+	\begin{frame}[fragile]{HALCON - Instalación}
+		Es importante señalar que correr los simuladores en Windows con WSL es mucho más lento que correr los simuladores en Ubuntu nativo. Por lo tanto, se recomienda Ubuntu nativo para simulaciones largas o barridos de parámetros.\\
+		Después de la instalación de Docker, verificar que está funcionando con:
+		
+		\begin{lstlisting}
+			docker --version
+		\end{lstlisting}
+		
+		\textbf{Importante}: en Windows hay que tener corriendo Docker Desktop para que WSL lo levante. El comando para verificar que Docker está funcionando, y todos los comandos de aquí en adelante, se corren en una terminal WSL2 de Ubuntu (o cualquier otra distro de Linux). Para definir WSL2 por defecto ejecutar el siguiente comando y reiniciar la computadora:
+		
+		\begin{lstlisting}
+			wsl --set-default-version 2
+		\end{lstlisting}
+		
+	\end{frame}
+	
+	
+	\begin{frame}[fragile]{HALCON - Instalación}
+	\textbf{¿Qué repositorios clonar?}\newline
+	
+	No es necesario clonar todos los repositorios ya que están enlazados entre sí mediante sub-módulos de Git. Es decir, cada repositorio incluye a los repositorios que requiere para funcionar.\newline
+	Para este tutorial, es suficiente con el repositorio \underline{Examples}:\newline
+	
+	\begin{lstlisting}
+		cd <some_path>
+		mkdir halcon
+		cd halcon/
+		git clone https://gitlab.com/hawk-dsp/examples.git
+		cd examples/
+		git submodule update --init --recursive
+	\end{lstlisting}
+	
+	\end{frame}
+	
+	\begin{frame}[fragile]{HALCON - Instalación}
+		Sin embargo, si se desea clonar los principales repositorios de HALCON para participar en el desarrollo del proyecto, los comandos son los siguientes:\newline
+		
+		\begin{lstlisting}
+		cd <some_path>
+		mkdir halcon
+		cd halcon/
+		git clone https://gitlab.com/hawk-dsp/core.git
+		git clone https://gitlab.com/hawk-dsp/release.git
+		git clone https://gitlab.com/hawk-dsp/modules.git
+		git clone https://gitlab.com/hawk-dsp/examples.git
+		git clone https://gitlab.com/hawk-dsp/tools.git
+		git clone https://gitlab.com/hawk-dsp/tutorials.git
+		cd examples/
+		git submodule update --init --recursive
+		cd ../tutorials/
+		git submodule update --init --recursive
+		\end{lstlisting}
+		
+	\end{frame}
+	
+	\begin{frame}{HALCON - Instalación}
+	\textbf{Importante}: con el fin de simplificar las cosas, de aquí en adelante y a lo largo de todos los tutoriales se va a hacer referencia a los directorios del proyecto con las siguientes macros:\newline
+	
+	\begin{itemize}
+		\item {HALCON} = <some\_path>/halcon
+		\item {CORE} = <some\_path>/halcon/core
+		\item {RELEASE} = <some\_path>/halcon/release
+		\item {MODULES} = <some\_path>/halcon/modules
+		\item {EXAMPLES} = <some\_path>/halcon/examples
+		\item {TOOLS} = <some\_path>/halcon/tools
+	\end{itemize}
+	
+	\vspace{0.5cm}
+	Por ejemplo, el comando cd {HALCON} implica cambiar al directorio <some\_path>/halcon.
+	\end{frame}
+	
+	\begin{frame}[fragile]{HALCON - Instalación}
+		\textbf{¿Cómo correr el contenedor?}\newline
+		Antes de lanzar el contenedor hay que ubicar al archivo dockerfile en el repositorio y construir el contenedor. La construcción se hace una única vez a menos que se hagan modificaciones en el dockerfile, en tal caso hay que volver a construirlo.
+		\begin{enumerate}
+			\item Ubicar el archivo dockerfile: si clonaste Tools, el dockerfile está en {HALCON}/tools/docker. Si solo clonaste Examples, el archivo está en {HALCON}/examples/lib/tools/docker. Para no perder generalidad en el tutorial, nos referiremos a este path como {DOCKER}.
+			\item Construir el contenedor (tarda unos 30 minutos):
+		\end{enumerate}
+		
+		\begin{lstlisting}
+			cd {DOCKER}
+			sh build.sh
+		\end{lstlisting}
+		
+	\footnotesize \textbf{Importante}: el contenedor siempre se debe construir en el directorio {DOCKER} porque es donde se encuentra el archivo dockerfile.
+	\end{frame}
+
+	\begin{frame}{HALCON - Instalación}
+	\begin{enumerate}
+		\setcounter{enumi}{2}
+		\item Lanzar el contenedor
+	\end{enumerate}
+	\vspace{0.9cm}
+	\footnotesize \textbf{Importante}: el contenedor siempre se debe lanzar en el directorio {HALCON}. De este modo, siempre se mapea el directorio /app del contenedor con el directorio 
+	\end{frame}
+
+	\begin{frame}{HALCON - Instalación - Algunos comentarios}
+	
+	\begin{enumerate}
+		\item De aquí en adelante todos los comandos se ejecutan dentro del contenedor a menos que se indique lo contrario.
+		
+		\item El archivo dockerfile describe todo lo que el contenedor tiene instalado por defecto con sus respectivas versiones. Por ejemplo, el contenedor de este proyecto ya tiene Git, Python3, Doxygen y gcc13. Además, tiene algunas librerías de C++ y algunos módulos de Python.
+		
+		\item Todo lo que se instale dentro del contenedor (y no a través del dockerfile) se pierde al cerrar el mismo. Por lo tanto, en caso de necesitar instalar algo, hacerlo a través del dockerfile y volver a construir el contenedor.
+		
+		\item Es una buena práctica ser explicito con las versiones de las librerías de las que depende el proyecto (más que todo en C++). Por lo tanto, siempre poner las versiones de lo que se instale en el dockerfile porque descubrir que un bug se debe al cambio de versión de una dependencia es una tarea titánica.
+		
+	\end{enumerate}
+	\end{frame}
+	
+	\begin{frame}[fragile]{HALCON - Instalación}
+	\textbf{¿Cómo correr un simulador?}\newline
+	
+	En el tutorial del proyecto HALCON en gitlab están detallados los pasos para correr el simulador de forma manual. En nuestro caso haremos uso del script main.py que automatiza el proceso de compilación, ejecución del simulador y ejecución de tests en una sola línea:
+	
+	\begin{lstlisting}
+	cd {EXAMPLES}/low_pass_filter_sim/
+	python3 main.py -h       	 # Lista opciones (opcional)
+	python3 main.py -f -r -t	 # Compila (-f), ejecuta (-r) y corre plot.py (-t)
+	\end{lstlisting}
+	
+	\footnotesize \textbf{Importante}: el script main.py tiene dos flags de compilación diferentes, -p y -f. La primera opción compila el proyecto solo simulando los flancos positivos de los clocks mientras que la segunda compila una versión donde ambos flancos son simulados. Si la aplicación no demanda simular los flancos negativos de los relojes, se recomienda compilar con -p ya que en este modo el tiempo de ejecución del binario es la mitad que para el caso compilado con -f.
+	\end{frame}
+	
+	\begin{frame}
+		
+	\centering
+		\Huge \textbf{Q\&A}
+
+		
+	\end{frame}
+	
+\end{document}

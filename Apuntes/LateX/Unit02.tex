@@ -1,0 +1,977 @@
+\documentclass[11pt]{beamer}
+\usetheme{Madrid}
+\usefonttheme{serif}
+
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage[T1]{fontenc}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx, xcolor}
+\usepackage{listings}
+
+\usepackage[absolute,overlay]{textpos}
+\usepackage[most]{tcolorbox}
+
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, calc}
+
+\tikzstyle{startstop} = [rectangle, rounded corners, minimum width=3cm, minimum height=1cm,text centered, draw=black, fill=red!30]
+\tikzstyle{process} = [rectangle, minimum width=3cm, minimum height=1cm, text centered, draw=black, fill=blue!20]
+\tikzstyle{decision} = [diamond, aspect=2, minimum width=3.5cm, minimum height=1cm, text centered, draw=black, fill=yellow!40]
+\tikzstyle{arrow} = [thick, ->, >=Stealth]
+
+
+\DeclareMathOperator{\sen}{sen}
+\DeclareMathOperator{\tg}{tg}
+
+\setbeamertemplate{caption}[numbered]
+
+%\setbeameroption{show notes on second screen=right}  % También puedes usar: show notes on second screen=right
+
+\author[LLO]{Ing. Leonardo Luis Ortiz}
+\title{Simulador HALCON}
+% Informe su email de contato o comando a seguir
+% Por ejemplo, alcebiades.col@ufes.br
+\newcommand{\email}{leonardo.ortiz@ib.edu.ar}
+%\setbeamercovered{transparent} 
+\setbeamertemplate{navigation symbols}{} 
+\logo{\includegraphics[scale=0.08]{images/IB.png}} 
+\institute[]{Instituto Balseiro \par Centro Atómico Bariloche} 
+\date{\today} 
+%\subject{}
+
+% ---------------------------------------------------------
+% Selecione un estilo de referencia
+\bibliographystyle{apalike}
+
+%\bibliographystyle{abbrv}
+%\setbeamertemplate{bibliography item}{\insertbiblabel}
+% ---------------------------------------------------------
+
+% ---------------------------------------------------------
+% Incluir los slides 
+%\usepackage[spanish,hyperpageref]{backref}
+
+%\renewcommand{\backrefpagesname}{Cita de página(s):~}
+%\renewcommand{\backref}{}
+%\renewcommand*{\backrefalt}[4]{
+	%	\ifcase #1 %
+	%		Sin citas en el texto.%
+	%	\or
+	%		Citado en la página #2.%
+	%	\else
+	%		Citado #1 veces en las páginas #2.%
+	%	\fi}%
+% ---------------------------------------------------------
+%% Configuración para el código
+%\lstset{
+%	language=C++,
+%	basicstyle=\ttfamily\scriptsize,
+%	keywordstyle=\color{blue},
+%	commentstyle=\color{gray},
+%	stringstyle=\color{orange},
+%	showstringspaces=false,
+%	breaklines=true,
+%	frame=single,
+%	numbers=left,
+%	numberstyle=\tiny,
+%	tabsize=2
+%}
+
+% Estilo para VHDL
+\lstdefinelanguage{VHDL}{
+	morekeywords={
+		library,use,all,entity,is,port,in,out,end,architecture,of,begin,
+		signal,process,if,then,else,elsif,wait,until,when,others
+	},
+	sensitive=true,
+	morecomment=[l]--,
+	morestring=[b]"
+}
+
+\lstset{
+	language=VHDL,
+	basicstyle=\ttfamily\scriptsize,
+	keywordstyle=\color{blue},
+	commentstyle=\color{gray},
+	stringstyle=\color{orange},
+	showstringspaces=false,
+	breaklines=true,
+	frame=single,
+	numbers=left,
+	numberstyle=\tiny,
+	tabsize=2,
+	captionpos=b
+}
+
+
+\begin{document}
+	
+	\begin{frame}
+		\titlepage
+	\end{frame}
+	
+	\begin{frame}{Contenido}
+		\tableofcontents 
+	\end{frame}
+	
+	\section{Simulador HALCON}
+	
+	\begin{frame}{HALCON}
+		\begin{figure}[htb]
+			\centering
+			\includegraphics[width=0.9\textwidth]{images/2_HALCON_logo}
+		\end{figure}
+	\end{frame}
+	
+	\begin{frame}{HALCON}
+		\textbf{HALCON} es un proyecto de código abierto desarrollado por Patricio Reus Merlo que consiste en un conjunto de herramientas desarrolladas en C++20 y Python3 que permiten a los usuarios diseñar y verificar arquitecturas de procesamiento digital de señales (DSP) desde las primeras etapas de diseño (alto nivel) hasta la implementación digital (RTL).
+	\end{frame}
+	
+	\begin{frame}{HALCON}
+	\textbf{Entorno de desarrollo}\newline
+		
+	\begin{itemize}
+	\item Lenguaje de programación: C++20
+	\item Compilación: Cmake+gcc13 + Python
+	\item Control de versiones: GitLab
+	\item Entorno de simulación y test: Docker
+	\item Automatización y scripting: Python
+	\item Documentación de código: Doxygen
+	\item Documentación funcional y tutoriales: Markdown+ LaTex
+	\end{itemize}
+	\end{frame}
+	
+	\begin{frame}{HALCON - Core}
+		\textbf{Estructura de HALCON}
+		\begin{figure}[htb]
+			\centering
+			\includegraphics[width=0.9\textwidth]{images/2_HALCON_structure}
+		\end{figure}
+	\end{frame}
+	
+	
+	\begin{frame}{HALCON - Core}
+	\textbf{Estructura de HALCON}
+	\begin{figure}[htb]
+		\centering
+		\includegraphics[width=1.0\textwidth]{images/2_HALCON_core}
+	\end{figure}
+	\end{frame}
+	
+	\begin{frame}{HALCON - Clases de usuario}
+	\textcolor{red}{\textbf{Module:}}
+	\begin{itemize}
+		\item Un módulo es un \underline{contenedor} donde se describen algoritmos y/o modelos
+		\item Puede describir estrictamente un bloque de \underline{DSP a nivel de RTL y a nivel de sistemas}
+		\item Puede contener modelos de componentes analógicos (ej. canal, ADC)
+		\item Puede \underline{instanciar otros módulos} en su interior (submódulos) y configurarlos
+		\item Puede \underline{modelar lógica combinacional y secuencial}
+	\end{itemize}
+	\begin{figure}[htb]
+		\centering
+		\includegraphics[width=0.8\textwidth]{images/2_HALCON_module}
+	\end{figure}
+	\end{frame}
+
+	\begin{frame}{HALCON - Clases de usuario}
+	\textcolor{red}{\textbf{Module:}}
+	\begin{figure}[htb]
+		\centering
+		\includegraphics[width=0.8\textwidth]{images/2_HALCON_module_2}
+	\end{figure}
+	\end{frame}
+	
+	\begin{frame}{HALCON - Clases de usuario}
+		\textcolor{red}{\textbf{Register:}}
+		\begin{itemize}
+			\item Modela un registro de forma explícita y segura (evita registros implícitos)
+		\end{itemize}
+		\textcolor{red}{\textbf{Port:}}
+		\begin{itemize}
+			\item La interfase de un módulo con otros módulos se hace a través de puertos
+			\item Según su comportamiento frente a un clock, se clasifican en secuenciales o combinacionales
+			\item Según el flujo de la información, se clasifican como entradas o salidas
+		\end{itemize}
+		\begin{figure}[htb]
+			\centering
+			\includegraphics[width=0.8\textwidth]{images/2_HALCON_registers_ports}
+		\end{figure}
+	\end{frame}
+	
+	\begin{frame}{HALCON - Clases de usuario}
+		\textcolor{red}{\textbf{Ports y Register:}}
+		
+		\begin{figure}[htb]
+			\centering
+			\includegraphics[width=1.0\textwidth]{images/2_HALCON_register_ports_2}
+		\end{figure}
+	\end{frame}
+	
+	\begin{frame}{HALCON - Clases de usuario}
+	
+	\begin{columns}[t]
+	\column{0.5\textwidth}	
+	\textbf{Puerto combinacioal}
+	\begin{itemize}
+		\item Rastrean y ejecutan las funciones asociadas a ellos
+		\item Aseguran que los valores de los datos estén actualizados
+	\end{itemize}	
+	\vspace{1.0cm}	
+	\begin{figure}[htb]
+		\centering
+		\includegraphics[width=1.0\textwidth]{images/2_HALCON_puerto_combinacional}
+	\end{figure}
+		
+	\column{0.5\textwidth}	
+	\textbf{Puerto secuencial}	
+	\begin{itemize}
+		\item Lógica controlada por las secuencias de ejecución de reloj
+		\item Los valores de los datos dependen de los registros asociados
+	\end{itemize}	
+	\begin{figure}[htb]
+		\centering
+		\includegraphics[width=1.0\textwidth]{images/2_HALCON_puerto_secuencial}
+	\end{figure}
+	
+	\end{columns}	
+	\end{frame}
+	
+	\begin{frame}{HALCON - Clases de usuario}
+		\textcolor{red}{\textbf{Clock:}}
+		
+		\begin{itemize}
+		\item Contiene un \underline{listado de módulos con sus respectivos registros} que son sensibles a alguno de sus flancos
+		\item \underline{Ejecuta la lógica de tiempo “continuo” y de tiempo “discreto”} de los módulos asociados a él
+		\item Lleva el \underline{conteo de tiempo} de simulación
+		\end{itemize}
+		
+		\begin{figure}[htb]
+			\centering
+			\includegraphics[width=0.9\textwidth]{images/2_HALCON_clock}
+		\end{figure}
+	\end{frame}
+	
+	\begin{frame}{HALCON - Clases de usuario}
+		\textcolor{red}{\textbf{Clock:}}
+		\begin{figure}[htb]
+			\centering
+			\includegraphics[width=0.9\textwidth]{images/2_HALCON_clock_2}
+		\end{figure}
+	\end{frame}
+	
+	\begin{frame}{HALCON - Clases de usuario}
+		\textcolor{red}{\textbf{Clock:}}
+		\begin{figure}[htb]
+			\centering
+			\includegraphics[width=0.9\textwidth]{images/2_HALCON_clock_3}
+		\end{figure}
+	\end{frame}
+	
+	\begin{frame}{HALCON - Clases de usuario}
+		\textcolor{red}{\textbf{Clock:}}
+		\begin{figure}[htb]
+			\centering
+			\includegraphics[width=0.9\textwidth]{images/2_HALCON_clock_4}
+		\end{figure}
+	\end{frame}
+	
+	\begin{frame}{HALCON - Clases de usuario}
+		\textbf{Clocks derivados}
+
+		\begin{figure}[htb]
+			\centering
+			\includegraphics[width=1.0\textwidth]{images/2_HALCON_clock_5}
+		\end{figure}
+	\end{frame}
+	
+	\begin{frame}{HALCON - Clases de usuario}
+	\begin{columns}[t]
+	\column{0.5\textwidth}	
+	\textbf{Clocks derivados}
+	\tiny %scriptsize
+	\begin{itemize}
+	\item Todos los relojes tienen 4 puertos:
+	\begin{itemize}
+	\tiny
+	\item \textcolor{red}{i\_frequency\_hz}: control de frecuencia
+	\item \textcolor{red}{i\_phase\_deg}: control de fase inicial
+	\item \textcolor{red}{i\_division\_factor\_num}: num. del divisor de frecuencia
+	\item \textcolor{red}{i\_division\_factor\_den}: den. del divisor de frecuencia
+	\end{itemize}
+	
+	\item El puerto \textcolor{red}{i\_frequency\_hz} de los clocks derivados se conecta automáticamente al puerto i\_frequency\_hz del clock del que se derivan.
+	\item \textcolor{red}{IMPORTANTE}: luego de la derivación de un clock, no redefinir el puerto \textcolor{red}{i\_frequency\_hz} del clock derivado.
+	\item 	Cada vez que se ejecuta un clock, éste se actualiza leyendo el valor de frecuencia de su puerto. A este puerto se puede conectar una señal variante en el tiempo.
+	\item Todas las conexiones entre clocks y las derivaciones se deben hacer dentro de un método Connect() del módulo/simulador que contenga a los clocks.
+	
+	\end{itemize}	
+
+	\column{0.5\textwidth}	
+	\begin{figure}[htb]
+		\centering
+		\includegraphics[width=1.0\textwidth]{images/2_HALCON_clock_6}
+	\end{figure}
+	\end{columns}	
+	\end{frame}
+	
+		\begin{frame}{HALCON - Clases de usuario}
+		\textcolor{red}{\textbf{Clock:}}
+		\begin{figure}[htb]
+			\centering
+			\includegraphics[width=0.9\textwidth]{images/2_HALCON_clock_2}
+		\end{figure}
+	\end{frame}
+	
+	\begin{frame}{HALCON - Clases de usuario}
+		\textcolor{red}{\textbf{Simulator:}}
+		\begin{itemize}
+			\item Al derivar de módulo hereda todas sus propiedades. Es decir, es un contenedor de otros bloques (ej. módulos y clocks)
+			\item Agrega bloques básicos que hacen evolucionar la simulación: Scheduler, Command Handler, Logger, Setter, etc
+			\item Es el bloque de mayor jerarquía y por ende es el encargado de nombrar, configurar, conectar e inicializar todos los módulos y submódulos que contenga
+		\end{itemize}
+		\begin{figure}[htb]
+			\centering
+			\includegraphics[width=0.9\textwidth]{images/2_HALCON_simulator}
+		\end{figure}
+	\end{frame}
+	
+	
+		\begin{frame}{HALCON - Clases de usuario}
+		\textcolor{red}{\textbf{Simulator:}}
+		\begin{itemize}
+			\item Al derivar de módulo hereda todas sus propiedades. Es decir, es un contenedor de otros bloques (ej. módulos y clocks)
+			\item Agrega bloques básicos que hacen evolucionar la simulación: Scheduler, Command Handler, Logger, Setter, etc
+			\item Es el bloque de mayor jerarquía y por ende es el encargado de nombrar, configurar, conectar e inicializar todos los módulos y submódulos que contenga
+		\end{itemize}
+		\begin{figure}[htb]
+			\centering
+			\includegraphics[width=0.9\textwidth]{images/2_HALCON_simulator}
+		\end{figure}
+	\end{frame}
+	
+	\lstdefinestyle{myCustomMatlabStyle}{
+		language=Matlab,
+		numbers=left,
+		stepnumber=1,
+		numbersep=10pt,
+		tabsize=4,
+		showspaces=false,
+		showstringspaces=false
+	}
+	
+	\begin{frame}{\textbf{HALCON} - Startup}
+	\textcolor{red}{\textbf{Simulator:}}
+	\begin{figure}[htb]
+	\begin{flushright} 
+		\includegraphics[width=0.6\textwidth]{images/2_HALCON_simulator_1_code}
+	\end{flushright}
+	\end{figure}
+	\begin{figure}[htb]
+		\centering
+		\includegraphics[width=0.9\textwidth]{images/2_HALCON_simulator_1}
+	\end{figure}
+	\end{frame}
+
+
+	\begin{frame}{\textbf{HALCON} - Startup}	
+	\textcolor{red}{\textbf{Simulator:}}
+	\begin{figure}[htb]
+	\begin{flushright} 
+	\includegraphics[width=0.45\textwidth]{images/2_HALCON_simulator_2_code}
+	\end{flushright}
+	\end{figure}
+	
+	\begin{figure}[htb]
+		\centering
+		\includegraphics[width=0.8\textwidth]{images/2_HALCON_simulator_2}
+	\end{figure}
+	\end{frame}
+
+
+	\begin{frame}{\textbf{HALCON} - Startup}
+	\textcolor{red}{\textbf{Simulator:}}
+	\begin{figure}[htb]
+		\begin{flushright} 
+			\includegraphics[width=0.45\textwidth]{images/2_HALCON_simulator_3_code}
+		\end{flushright}
+	\end{figure}
+	
+	\begin{figure}[htb]
+		\centering
+		\includegraphics[width=0.8\textwidth]{images/2_HALCON_simulator_3}
+	\end{figure}
+	\end{frame}
+
+	\begin{frame}{\textbf{HALCON} - Startup}
+	\textcolor{red}{\textbf{Simulator:}}
+	\begin{figure}[htb]
+		\begin{flushright} 
+			\includegraphics[width=0.6\textwidth]{images/2_HALCON_simulator_4_code}
+		\end{flushright}
+	\end{figure}
+	
+	\begin{figure}[htb]
+		\centering
+		\includegraphics[width=0.8\textwidth]{images/2_HALCON_simulator_4}
+	\end{figure}
+	\end{frame}
+
+	\begin{frame}{\textbf{HALCON} - Startup}
+	\textcolor{red}{\textbf{Simulator:}}
+	\begin{figure}[htb]
+		\begin{flushright} 
+			\includegraphics[width=0.55\textwidth]{images/2_HALCON_simulator_5_code}
+		\end{flushright}
+	\end{figure}
+	
+	\begin{figure}[htb]
+		\centering
+		\includegraphics[width=0.8\textwidth]{images/2_HALCON_simulator_5}
+	\end{figure}
+	\end{frame}
+	
+	
+	\begin{frame}{\textbf{HALCON} - Startup}
+	\textcolor{red}{\textbf{Simulator:}}
+	\begin{figure}[htb]
+		\begin{flushright} 
+			\includegraphics[width=0.55\textwidth]{images/2_HALCON_simulator_6_code}
+		\end{flushright}
+	\end{figure}
+	
+	\begin{figure}[htb]
+		\centering
+		\includegraphics[width=0.8\textwidth]{images/2_HALCON_simulator_6}
+	\end{figure}
+	\end{frame}
+	
+	
+	\begin{frame}{\textbf{HALCON} - Startup}
+	\textcolor{red}{\textbf{Simulator:}}
+	\begin{figure}[htb]
+		\begin{flushright} 
+			\includegraphics[width=0.55\textwidth]{images/2_HALCON_simulator_7_code}
+		\end{flushright}
+	\end{figure}
+	
+	\begin{figure}[htb]
+		\centering
+		\includegraphics[width=0.8\textwidth]{images/2_HALCON_simulator_7}
+	\end{figure}
+	\end{frame}
+	
+	
+	\begin{frame}{\textbf{HALCON} - Startup}
+	\textcolor{red}{\textbf{Simulator:}}
+	\begin{figure}[htb]
+		\begin{flushright} 
+			\includegraphics[width=0.55\textwidth]{images/2_HALCON_simulator_8_code}
+		\end{flushright}
+	\end{figure}
+	
+	\begin{figure}[htb]
+		\centering
+		\includegraphics[width=0.8\textwidth]{images/2_HALCON_simulator_8}
+	\end{figure}
+	\end{frame}
+
+	\begin{frame}{\textbf{HALCON} - Startup}
+	\textcolor{red}{\textbf{Simulator:}}
+	\begin{figure}[htb]
+		\begin{flushright} 
+			\includegraphics[width=0.55\textwidth]{images/2_HALCON_simulator_9_code}
+		\end{flushright}
+	\end{figure}
+	
+	\begin{figure}[htb]
+		\centering
+		\includegraphics[width=0.8\textwidth]{images/2_HALCON_simulator_9}
+	\end{figure}
+	\end{frame}
+	
+	\begin{frame}{\textbf{HALCON} - Startup}
+	\textcolor{red}{\textbf{Simulator:}}
+
+	\begin{figure}[htb]
+		\centering
+		\includegraphics[width=1.0\textwidth]{images/2_HALCON_simulator_10}
+	\end{figure}
+	\end{frame}
+	
+	\section{Tools}
+
+	\begin{frame}{\textbf{HALCON} - LOGs}
+	\begin{columns}[t]
+		\column{0.5\textwidth}	
+		\scriptsize
+		\begin{itemize}
+		\item \textcolor{red}{signals}: señal de interés
+		\item \textcolor{red}{clock}: reloj de muestreo
+		\item \textcolor{red}{edge}: flancos de muestreo. Puede ser POSITIVE, NEGATIVE o BOTH
+		\item \textcolor{red}{begin, step, end}: definen la ventana de muestreo y el subsample
+		\item \textcolor{red}{file\_type}: define el tipo de archive de salida. Puede ser TEXT o BINARY
+		\item \textcolor{red}{file\_name\_type}: controla el nombre del archive. Puede ser SHORT o LONG
+		\item \textcolor{red}{format}: solo afecta a los LOGs de datos de tipo \underline{ac\_fixed}, \underline{array ac\_fixed}, \underline{Port ac\_fixed} y \underline{Port array ac\_fixed}. Solo válido con archivos de texto. Las macros soportadas son DOUBLE, UINT y HEX
+		\end{itemize}	
+		
+		\column{0.5\textwidth}	
+		\begin{figure}[htb]
+			\centering
+			\includegraphics[width=1.0\textwidth]{images/2_HALCON_LOGS}
+		\end{figure}
+	\end{columns}	
+	\end{frame}
+	
+	\begin{frame}{\textbf{HALCON} - LOGs}
+	\begin{figure}[htb]
+	\centering
+	\includegraphics[width=1.0\textwidth]{images/2_HALCON_LOGS_2}
+	\end{figure}
+	\end{frame}
+	
+	\begin{frame}{\textbf{HALCON}}
+	\textbf{Barrido de parámetros: clases}	
+	\begin{figure}[htb]
+		\begin{flushleft}
+		\includegraphics[width=0.55\textwidth]{images/2_HALCON_sweep}
+		\end{flushleft}
+	\end{figure}
+	\end{frame}
+	
+	\begin{frame}{\textbf{HALCON}}
+	\textbf{Barrido de parámetros: clases}	
+	\begin{figure}[htb]
+		\centering
+		\includegraphics[width=1.0\textwidth]{images/2_HALCON_sweep_2}
+	\end{figure}
+	\end{frame}
+	
+	\begin{frame}{\textbf{HALCON}}
+	\textbf{Barrido de parámetros: clases}	
+	\begin{figure}[htb]
+		\centering
+		\includegraphics[width=1.0\textwidth]{images/2_HALCON_sweep_3}
+	\end{figure}
+	\end{frame}
+	
+	\begin{frame}{\textbf{HALCON}}
+	\textbf{Barrido de parámetros: clases}	
+	\begin{figure}[htb]
+		\centering
+		\includegraphics[width=1.0\textwidth]{images/2_HALCON_sweep_4}
+	\end{figure}
+	\end{frame}
+	
+	\begin{frame}{\textbf{HALCON}}
+	\textbf{Barrido de parámetros: directorios}	
+	\begin{figure}[htb]
+		\centering
+		\includegraphics[width=1.0\textwidth]{images/2_HALCON_sweep_5}
+	\end{figure}
+	\end{frame}
+	
+	\begin{frame}{\textbf{HALCON}}
+	\textbf{Barrido de parámetros: clases}	
+	\begin{figure}[htb]
+		\centering
+		\includegraphics[width=1.0\textwidth]{images/2_HALCON_sweep_6}
+	\end{figure}
+	\end{frame}
+	
+	\begin{frame}{\textbf{HALCON}}
+	\textbf{Barrido de parámetros: clases}	
+	\begin{figure}[htb]
+		\centering
+		\includegraphics[width=1.0\textwidth]{images/2_HALCON_sweep_7}
+	\end{figure}
+	\end{frame}
+
+	\section{Ejemplo}
+	
+	\begin{frame}
+		\centering
+		\Huge \textbf{Ejemplo}
+	\end{frame}
+	
+	\begin{frame}{\textbf{HALCON} - Registro de desplazamiento}
+	\begin{columns}[t]
+		\column{0.5\textwidth}	
+		\begin{figure}[htb]
+			\centering
+			\includegraphics[width=1.0\textwidth]{images/2_HALCON_sr_1}
+		\end{figure}
+		
+		\column{0.5\textwidth}	
+		\begin{figure}[htb]
+			\centering
+			\includegraphics[width=1.0\textwidth]{images/2_HALCON_sr_1_code}
+		\end{figure}
+	\end{columns}	
+	\end{frame}
+	
+	\begin{frame}{\textbf{HALCON} - Registro de desplazamiento}
+		\begin{columns}[t]
+			\column{0.5\textwidth}	
+			\begin{figure}[htb]
+				\centering
+				\includegraphics[width=1.0\textwidth]{images/2_HALCON_sr_1}
+			\end{figure}
+			
+			\column{0.5\textwidth}	
+			\begin{figure}[htb]
+				\centering
+				\includegraphics[width=1.0\textwidth]{images/2_HALCON_sr_2_code}
+			\end{figure}
+		\end{columns}	
+	\end{frame}
+	
+	\begin{frame}{\textbf{HALCON} - Registro de desplazamiento}
+		\begin{columns}[t]
+			\column{0.5\textwidth}	
+			\begin{figure}[htb]
+				\centering
+				\includegraphics[width=1.0\textwidth]{images/2_HALCON_sr_1}
+			\end{figure}
+			
+			\column{0.5\textwidth}	
+			\begin{figure}[htb]
+				\centering
+				\includegraphics[width=1.0\textwidth]{images/2_HALCON_sr_3_code}
+			\end{figure}
+		\end{columns}	
+	\end{frame}
+	
+	% Testbench
+	
+	\begin{frame}{\textbf{HALCON} - Registro de desplazamiento}
+		\begin{columns}[t]
+			\column{0.5\textwidth}	
+			\begin{figure}[htb]
+				\centering
+				\includegraphics[width=1.0\textwidth]{images/2_HALCON_sr_4}
+			\end{figure}
+			
+			\column{0.5\textwidth}	
+			\begin{figure}[htb]
+				\centering
+				\includegraphics[width=1.0\textwidth]{images/2_HALCON_sr_4_code}
+			\end{figure}
+		\end{columns}	
+	\end{frame}
+	
+	\begin{frame}{\textbf{HALCON} - Registro de desplazamiento}
+		\begin{columns}[t]
+			\column{0.5\textwidth}	
+			\begin{figure}[htb]
+				\centering
+				\includegraphics[width=1.0\textwidth]{images/2_HALCON_sr_5_code_1}
+			\end{figure}
+			
+			\column{0.5\textwidth}	
+			\begin{figure}[htb]
+				\centering
+				\includegraphics[width=1.0\textwidth]{images/2_HALCON_sr_5_code_2}
+			\end{figure}
+		\end{columns}	
+	\end{frame}
+	
+	\begin{frame}{\textbf{HALCON} - Registro de desplazamiento}
+		\begin{columns}[t]
+			\column{0.5\textwidth}	
+			\begin{figure}[htb]
+				\centering
+				\includegraphics[width=1.0\textwidth]{images/2_HALCON_sr_6_code_1}
+			\end{figure}
+			
+			\column{0.5\textwidth}	
+			\begin{figure}[htb]
+				\centering
+				\includegraphics[width=1.0\textwidth]{images/2_HALCON_sr_6_code_2}
+			\end{figure}
+		\end{columns}	
+	\end{frame}
+	
+	\begin{frame}{\textbf{HALCON} - Registro de desplazamiento}
+		\begin{columns}[t]
+			\column{0.45\textwidth}	
+			\begin{figure}[htb]
+				\centering
+				\includegraphics[width=1.0\textwidth]{images/2_HALCON_sr_7_code_1}
+			\end{figure}
+			
+			\column{0.55\textwidth}	
+			\begin{figure}[htb]
+				\centering
+				\includegraphics[width=1.0\textwidth]{images/2_HALCON_sr_7_code_2}
+			\end{figure}
+		\end{columns}	
+	\end{frame}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	\begin{frame}
+	\centering
+	\Huge \textbf{Q\&A}
+	\end{frame}
+	
+%	\begin{frame}{Lenguajes de Descripción de Hardware - HDL}
+%		
+%	\end{frame}
+%	
+%	
+%	\begin{frame}[fragile]{Lenguajes de Descripción de Hardware - VHDL}
+%
+%	\end{frame}
+%	
+%	\begin{frame}[fragile]{Lenguajes de Descripción de Hardware - VHDL}
+%
+%	\end{frame}
+%	
+%	\begin{frame}[fragile]{Lenguajes de Descripción de Hardware - VHDL Testbench)}
+%
+%	\end{frame}
+%
+%	\begin{frame}[fragile]{Lenguajes de Descripción de Hardware - VHDL Testbench}
+%
+%	\end{frame}
+%
+%	\begin{frame}[fragile]{Lenguajes de Descripción de Hardware - VHDL Testbench}
+%
+%	\end{frame}
+%
+%	\begin{frame}[fragile]{Lenguajes de Descripción de Hardware - VHDL Testbench}
+%
+%	\end{frame}
+%
+%
+%\begin{frame}{Lenguajes de Descripción de Hardware - Resumen}
+%	
+%\end{frame}
+%
+%\begin{frame}{Lenguajes de Descripción de Hardware - Resumen}
+%
+%\end{frame}
+%
+%\begin{frame}{Lenguajes de Descripción de Hardware - Resumen}	
+%
+%\end{frame}
+%
+%
+%\begin{frame}{Lenguajes de Software - Resumen}
+%
+%\end{frame}
+%
+%\begin{frame}{Lenguajes de Software - Resumen}
+%
+%\end{frame}
+%
+%\begin{frame}{Puntos claves: Concurrency}
+%
+%\end{frame}
+%
+%\begin{frame}{Puntos claves: Concurrency}
+%
+%\end{frame}
+%
+%\begin{frame}{Puntos claves: Concurrency}
+%
+%\end{frame}
+%
+%\begin{frame}{Puntos claves: Timing}
+%
+%\end{frame}
+%
+%\begin{frame}{Puntos claves: Timing}
+%
+%\end{frame}
+%
+%\begin{frame}{Puntos claves: Applications}
+%
+%\end{frame}
+%
+%\begin{frame}{Puntos claves: Applications}
+%
+%\end{frame}
+%
+%\section{Programación controlada por eventos}
+%	\begin{frame}{Programación controlada por eventos}
+%	\end{frame}
+%	
+%
+%\begin{frame}{Programación controlada por eventos}
+%
+%\end{frame}	
+%	
+%
+%\begin{frame}{Programación controlada por eventos}
+%
+%\end{frame}	
+%
+%
+%\begin{frame}[fragile]{Programación controlada por eventos}
+%
+%\end{frame}
+
+
+%	
+%\section{Utilizando C++ y Python}
+%	\begin{frame}{Utilizando C++ y Python}
+%		Breve descripción de Lenguajes de Descripción de Hardware. Comparativa
+%	\end{frame}
+%	
+%\section{Simulador HALCON - Getting started}
+%	\begin{frame}{Simulador HALCON - Getting started}
+%		Breve descripción de Lenguajes de Descripción de Hardware. Comparativa
+%	\end{frame}
+%	
+%\section{Ejemplo 1}
+%	\begin{frame}{Ejemplo 1}
+%		Breve descripción de Lenguajes de Descripción de Hardware. Comparativa
+%	\end{frame}
+%	
+%\section{Ejemplo 2}
+%	\begin{frame}{Ejemplo 2}
+%		Breve descripción de Lenguajes de Descripción de Hardware. Comparativa
+%	\end{frame}
+%
+%\section{Ejemplo 3}
+%	\begin{frame}{Ejemplo 3}
+%		Breve descripción de Lenguajes de Descripción de Hardware. Comparativa
+%	\end{frame}
+%
+%\section{Ejemplo 4}
+%	\begin{frame}{Ejemplo 4}
+%		Breve descripción de Lenguajes de Descripción de Hardware. Comparativa
+%	\end{frame}
+%
+%\section{Trabajo Final. Propuestas e Inicio implementación.}
+%\section{Trabajo Final. Implementación}
+%	
+%	
+%%
+%%	
+%%	\begin{frame}{Definiciones, Teoremas, Corolarios e Ejemplos}
+%%		\begin{block}{Definición 2.1.1}
+%%			Aquí tenemos una nueva definición
+%%		\end{block}
+%%		
+%%		\begin{block}{Teorema 2.1.2}
+%%			Aquí tenemos un nuevo teorema
+%%		\end{block}
+%%		
+%%		\begin{block}{Ejemplo 2.1.3}
+%%			Aquí tenemos un nuevo ejemplo.
+%%		\end{block}
+%%		
+%%		\begin{block}{Corolario 2.1.4}
+%%			Aqui tenemos un nuevo corolario.
+%%		\end{block}
+%%	\end{frame}
+%%	
+%%	\begin{frame}{Citas de las referencias}
+%%		Libro de Análisis Real~\cite{lima2004analise}
+%%	\end{frame}
+%%	
+%%	\begin{frame}{Listas}
+%%		Ejemplo de lista con símbolos:
+%%		
+%%		\begin{itemize}
+%%			\item Primer elemento
+%%			\item Segundo elemento
+%%		\end{itemize}
+%%		
+%%		\bigskip
+%%		
+%%		Ejemplo de lista con items enumerados:
+%%		
+%%		\begin{enumerate}
+%%			\item Primer elemento
+%%			\item Segundo elemento
+%%		\end{enumerate}
+%%	\end{frame}
+%%	
+%%	\begin{frame}{Tablas}
+%%		A Tabla muestra un modelo de tabla.
+%%		
+%%		\begin{table}[htb]
+%%			\caption{Ejemplo de tabla}
+%%			\label{tab:modelo_tabla}
+%%			\centering
+%%			\begin{tabular}{c|c|c|c}
+%%				\hline
+%%				\textbf{Persona} & \textbf{Edad} & \textbf{Peso} & \textbf{Altura} \\ \hline
+%%				Marcos & 26    & 68   & 178    \\ \hline
+%%				Ivone  & 22    & 57   & 162    \\ \hline
+%%				Sueli  & 40    & 65   & 153    \\ \hline
+%%			\end{tabular}
+%%			
+%%			\medskip
+%%			
+%%			Fuente: Producción del propio autor.
+%%		\end{table}
+%%	\end{frame}
+%%	
+%%	\begin{frame}{Imagenes}
+%%		La Figura muestra el logomarca promocional de Universidade Federal do Espírito Santo (UFES).
+%%		
+%%		\begin{figure}[htb]
+%%			\caption{Logomarca Promocional UFES}
+%%			\label{fig:logo_UFES}
+%%			\centering
+%%			\includegraphics[width=0.5\textwidth]{imagens/logomarca_UFES}
+%%			
+%%			\medskip
+%%			
+%%			Fuente: Producción del propio autor.
+%%		\end{figure}
+%%	\end{frame}
+%%	
+%%	\begin{frame}{Conclusión}
+%%		Texto referente a la conclusión.
+%%	\end{frame}
+%%	
+%%	\begin{frame}{Trabajos a futuro}
+%%		\begin{itemize}
+%%			\item Estudiar $\ldots$
+%%			
+%%			\medskip
+%%			
+%%			\item Explorar $\ldots$
+%%			
+%%			\medskip
+%%			
+%%			\item Analizar $\ldots$
+%%		\end{itemize}
+%%	\end{frame}
+%%	
+%%	\section{Referencias}
+%%	\begin{frame}[allowframebreaks]{Referencias}
+%%		\bibliography{referencias}
+%%	\end{frame}
+%%	
+%%	\begin{frame}
+%%		
+%%		\begin{center}
+%%			Gracias!
+%%			
+%%			\email
+%%		\end{center}
+%%		
+%%		\begin{figure}[htb]
+%%			\centering
+%%			\includegraphics[width=0.5\textwidth]{imagens/IB}
+%%		\end{figure}
+%%		
+%%	\end{frame}
+	
+\end{document}

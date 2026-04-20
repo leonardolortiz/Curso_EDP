@@ -16,7 +16,6 @@
 *.nav
 *.out
 *.snm
-*.tex
 *.toc
 *.vrb
 *.png
@@ -30,7 +29,7 @@
 *.o
 *output
 # *.pdf
-*.tex
+# *.tex
 *.csv
  
 # Hidden files and directories

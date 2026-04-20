@@ -1,0 +1,1633 @@
+\documentclass[11pt]{beamer}
+\usetheme{Madrid}
+\usefonttheme{serif}
+
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage[T1]{fontenc}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{listings}
+
+\usepackage{geometry}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{csquotes}
+
+\DeclareMathOperator{\sen}{sen}
+\DeclareMathOperator{\tg}{tg}
+
+\setbeamertemplate{caption}[numbered]
+
+%\setbeameroption{show notes on second screen=right}  % También puedes usar: show notes on second screen=right
+
+\author[LLO]{Ing. Leonardo Luis Ortiz}
+\title{Simulación RTL en C++}
+% Informe su email de contato o comando a seguir
+% Por ejemplo, alcebiades.col@ufes.br
+\newcommand{\email}{leonardo.ortiz@ib.edu.ar}
+%\setbeamercovered{transparent} 
+\setbeamertemplate{navigation symbols}{} 
+\logo{\includegraphics[scale=0.08]{images/IB.png}} 
+\institute[]{Instituto Balseiro \par Centro Atómico Bariloche} 
+\date{\today} 
+%\subject{}
+
+% ---------------------------------------------------------
+% Selecione un estilo de referencia
+\bibliographystyle{apalike}
+
+%\bibliographystyle{abbrv}
+%\setbeamertemplate{bibliography item}{\insertbiblabel}
+% ---------------------------------------------------------
+
+% ---------------------------------------------------------
+% Incluir los slides 
+%\usepackage[spanish,hyperpageref]{backref}
+
+%\renewcommand{\backrefpagesname}{Cita de página(s):~}
+%\renewcommand{\backref}{}
+%\renewcommand*{\backrefalt}[4]{
+	%	\ifcase #1 %
+	%		Sin citas en el texto.%
+	%	\or
+	%		Citado en la página #2.%
+	%	\else
+	%		Citado #1 veces en las páginas #2.%
+	%	\fi}%
+% ---------------------------------------------------------
+%% Configuración para el código
+%\lstset{
+%	language=C++,
+%	basicstyle=\ttfamily\scriptsize,
+%	keywordstyle=\color{blue},
+%	commentstyle=\color{gray},
+%	stringstyle=\color{orange},
+%	showstringspaces=false,
+%	breaklines=true,
+%	frame=single,
+%	numbers=left,
+%	numberstyle=\tiny,
+%	tabsize=2
+%}
+
+
+\begin{document}
+	
+	\begin{frame}
+		\titlepage
+	\end{frame}
+	
+	\begin{frame}{Agenda}
+		\tableofcontents 
+	\end{frame}
+	
+\begin{frame}
+	\centering	
+	\huge{\textbf{C++ Review}}
+\end{frame}	
+	
+	\section{C++ Review}
+	\begin{frame}
+		
+		\small
+		Desarrollado por Bjarne Stroustrup en 1989.
+		\vspace{0.5cm}
+		
+		Un standard formal desarrollado a principios de 1997.
+		\vspace{0.5cm}
+		
+		C++ es un lenguaje de propósito general de tipado estático que se basa en clases y funciones virtuales para tener soporte de programación orientada a objetos, templates (plantillas) para dar soporte de programación genérica y proporciona funciones de bajo nivel para permitir la programación detallada de sistemas.\\
+		\vspace{0.5cm}
+		C++ es un lenguaje multiparadigma. En otras palabras, C++ fue diseñado para admitir una amplia gama de estilos. Ningún lenguaje puede admitir todos los estilos. Sin embargo, se pueden admitir diversos estilos dentro del marco de un solo lenguaje. Cuando esto es posible, se obtienen importantes ventajas al compartir un sistema de tipos común, un conjunto de herramientas común, etc. Estas ventajas técnicas se traducen en importantes beneficios prácticos, como permitir que grupos con necesidades moderadamente diferentes compartan un lenguaje en lugar de tener que aplicar varios lenguajes especializados.
+		
+		
+	\end{frame}
+	
+
+	
+	\begin{frame}{Introducción}
+		\small
+			Este capítulo presenta de manera informal la notación de C++, el modelo de memoria y computación de C++, y los mecanismos básicos para organizar el código en un programa. Estas son las facilidades del lenguaje que soportan los estilos más comunes en C y que a veces se denominan programación procedimental.
+			\newline
+		
+		\begin{itemize}
+			\item Programas
+			\item Hola Mundo!
+			\item Funciones
+			\item Tipos, variables y aritmética
+			\item Alcance (scope) y Tiempo de vida (lifetime)
+			\item Constantes
+			\item Punteros, Arrays y Referencias
+			\item Testeos
+			\item Mapeo a Hardware
+		\end{itemize}
+		
+	\end{frame}
+	
+	\begin{frame}{Programas}
+	\small
+	C++ es un lenguaje compilado. Para que un programa se ejecute, su código fuente debe ser procesado por un compilador, que genera archivos objeto, los cuales se combinan mediante un enlazador para producir un programa ejecutable. Un programa C++ suele constar de muchos archivos de código fuente (normalmente denominados simplemente archivos fuente).
+	
+	\begin{figure}[htb]
+		\centering
+		\includegraphics[width=1.0\textwidth]{images/Cpp/Cpp_programs}
+	\end{figure}
+	
+	El estándar ISO C++ define dos tipos de entidades:
+	\begin{itemize}
+		\item \textit{Características básicas del lenguaje}, como tipos integrados (por ejemplo, \textbf{char} e \textbf{int}) y bucles (por ejemplo, sentencias \textbf{for} y \textbf{while})
+		\item \textit{Componentes de la biblioteca estándar}, como contenedores (por ejemplo, \textbf{vector} y \textbf{map}) y operaciones de E/S (por ejemplo, \textbf{<<} y \textbf{getline()})
+	\end{itemize}
+	
+	\end{frame}
+
+	\begin{frame}{Programas}
+	\small
+	C++ es un lenguaje de tipado estático. Es decir, el compilador debe conocer el tipo de cada entidad (por ejemplo, objeto, valor, nombre y expresión) en el momento de su uso. El tipo de un objeto determina el conjunto de operaciones que se pueden aplicar a él y su disposición en la memoria.
+	
+	\end{frame}
+
+	% Configuración para el código
+	\lstset{
+		language=C++,
+		basicstyle=\ttfamily\scriptsize,
+		keywordstyle=\color{blue},
+		commentstyle=\color{gray},
+		stringstyle=\color{orange},
+		showstringspaces=false,
+		breaklines=true,
+		frame=single,
+		numbers=left,
+		numberstyle=\tiny,
+		tabsize=2
+	}
+	
+	\begin{frame}[fragile]{Hola Mundo!}
+		
+	\begin{lstlisting}
+	import std;		// import the declarations for the standard library
+	
+	int main()
+	{
+		std::cout << "Hello, World!\n";
+	}
+	\end{lstlisting}
+	
+	\begin{lstlisting}
+	#include <iostream>
+	
+	using namespace std; // make names from std visible without std::
+	
+	int main()
+	{
+		cout << "Hello, World!\n";
+	}
+	\end{lstlisting}
+	
+	\end{frame}
+
+	\begin{frame}[fragile]{Funciones}
+		
+	\begin{lstlisting}
+	double getAreaFromShape(Shape& ob);	// Declaration
+	
+	int main(){
+	...
+	}
+	
+	double getAreaFromShape(Shape& ob)	// Definition
+	{
+		...
+	}		
+	\end{lstlisting}	
+		
+		
+	\begin{lstlisting}
+	Elem* next_elem(); // no argument; return a pointer to Elem (an Elem*)
+	void exit(int); // int argument; return nothing
+	double sqrt(double); // double argument; return a double
+	double sqrt(double d); // return the square root of d
+	double square(double); // return the square of the argument
+	double get(const vector<double>& vec, int index); // type: double(const vector<double>&,int
+	char& String::operator[](int index); // type: char& String::(int)	
+		
+	\end{lstlisting}
+	
+	\end{frame}
+	
+	\begin{frame}{Tipos, variables y aritmética}
+		Cada nombre y cada expresión tiene un tipo que determina las operaciones que pueden realizarse con él.
+		
+		Una declaración es una sentencia que introduce una entidad en el programa y especifica su tipo:\newline
+		\begin{itemize}
+			\item Un \textit{tipo} define un conjunto de valores posibles y un conjunto de operaciones (para un objeto).
+			\item Un \textit{objeto} es una memoria que contiene un valor de algún tipo.
+			\item Un \textit{valor} es un conjunto de bits interpretados según un tipo.
+			\item Una \textit{variable} es un objeto con nombre.
+		\end{itemize}
+	\end{frame}
+	
+%	\begin{frame}[fragile]{Tipos, variables y aritmética}	
+%		
+%	\begin{lstlisting}
+%	bool // Boolean, possible values are true and false
+%	char // character, for example, 'a', 'z', and '9'
+%	int // integer, for example, -273, 42, and 1066
+%	double // double-precision floating-point number, for example, -273.15, 3.14, and 6.626e-34
+%	unsigned // non-negative integer, for example, 0, 1, and 999 (use for bitwise logical operations)	
+%	\end{lstlisting}
+%
+%	\end{frame}	
+		
+
+	\begin{frame}[fragile]{Tipos, variables y aritmética}
+	
+	\begin{figure}[htb]
+		\centering
+		\includegraphics[width=1.0\textwidth]{images/Cpp/cpp_types}
+	\end{figure}
+		
+	\begin{lstlisting}
+		pi = 3.14159'26535'89793'23846'26433'83279'50288;
+	\end{lstlisting}
+	
+	\end{frame}
+	
+	
+	\begin{frame}[fragile]{Tipos, variables y aritmética}
+	\begin{columns}[t]
+	\column{0.5\textwidth}
+	Operadores aritméticos
+	\begin{lstlisting}
+	x+y // plus
+	+x // unary plus
+	x-y // minus
+	-x // unary minus
+	x*y // multiply
+	x/y // divide
+	x%y // remainder (modulus) for integers
+	\end{lstlisting}	
+	
+	\column{0.5\textwidth}	
+	\begin{lstlisting}	
+	x+=y // x = x+y
+	++x // increment: x = x+1
+	x-=y // x = x-y
+	--x // decrement: x = x-1
+	x*=y // scaling: x = x*y
+	x/=y // scaling: x = x/y
+	x%=y // x = x%y	
+	\end{lstlisting}
+	\end{columns}
+	
+	\begin{columns}[t]
+	\column{0.5\textwidth}	
+	Operadores de comparación	
+	\begin{lstlisting}	
+	x==y // equal
+	x!=y // not equal
+	x<y // less than
+	x>y // greater than
+	x<=y // less than or equal
+	x>=y // greater than or equal
+	\end{lstlisting}	
+	\column{0.5\textwidth}
+	Operadores lógicos
+	\begin{lstlisting}	
+	x&y // bitwise and
+	x|y // bitwise or
+	x^y // bitwise exclusive or
+	~x // bitwise complement
+	x&&y // logical and
+	x||y // logical or
+	!x // logical not (negation)
+	\end{lstlisting}
+
+	\end{columns}
+
+	\end{frame}
+
+	\begin{frame}{Tipos, variables y aritmética}
+	El orden de evaluación es de izquierda a derecha para \textbf{x.y}, \textbf{x->y}, \textbf{x(y)}, \textbf{x[y]}, \textbf{x<<y}, \textbf{x>>y}, \textbf{x\&\&y}, y \textbf{x||y}.
+	\newline
+	Para asignaciones es de derecha a izquierda \textbf{x+=y}.	
+	\end{frame}
+	
+	
+	\begin{frame}[fragile]{Tipos, variables y aritmética}
+	\textbf{Inicialización}
+	\begin{lstlisting}	
+double d1 = 2.3; // initialize d1 to 2.3
+double d2 {2.3}; // initialize d2 to 2.3
+double d3 = {2.3}; // initialize d3 to 2.3 (the = is optional with {... })
+complex<double> z = 1; // a complex number with double precision floating point scalars
+complex<double> z2 {d1,d2};
+complex<double> z3 = {d1,d2}; // the = is optional with {...}
+vector<int> v {1, 2, 3, 4, 5, 6}; // a vector of ints
+
+int i1 = 7.8; // i1 becomes 7 (surprise?)
+int i2 {7.8}; // error: floating-point to integer conversion
+
+auto b = true; // a bool
+auto ch = 'x'; // a char
+auto i = 123; // an int
+auto d = 1.2; // a double
+auto z = sqrt(y); // z has the type of whatever sqrt(y) returns
+auto bb {true}; // bb is a bool
+	
+	\end{lstlisting}
+	
+	\end{frame}
+	
+	\begin{frame}{Alcance y Tiempo de vida}
+		\small
+	Una declaración introduce su nombre en un ámbito:
+	\begin{itemize}
+		\item \textit{Local scope}: un nombre declarado en una función o lambda se denomina nombre local. Su alcance se extiende desde el punto de declaración hasta el final del bloque en el que se produce la declaración. Un bloque está delimitado por un par de {}. Los nombres de los argumentos de las funciones se consideran
+		nombres locales.
+		\item \textit{Class scope}: un nombre se denomina nombre miembro (o nombre miembro de un clase) si se define en una
+		clase, fuera de cualquier función, lambda o clase enumerada. Su ámbito se extiende desde la apertura { de su declaración envolvente hasta la correspondiente }.
+		\item \textit{Namescape scope}: un nombre se denomina nombre miembro del espacio de nombres si se define en un espacio de nombres fuera de cualquier función, lambda, clase o clase enumerada. Su ámbito se extiende desde el punto de declaración hasta el final de su namespace.
+		
+	\end{itemize}
+
+	\end{frame}
+	
+	\begin{frame}[fragile]{Alcance y Tiempo de vida}
+		\small
+	Un nombre que no se declara dentro de ninguna otra construcción se denomina nombre global y se dice que está en el namespace global.
+	Además, podemos tener objetos sin nombre, como los temporales y los creados mediante \textbf{new}. Por ejemplo:\\
+	\vspace{0.5cm}
+	
+	\begin{lstlisting}
+	vector<int> vec; // vec is global (a global vector of integers)
+	
+	void fct(int arg) // fct is global (names a global function)
+	// arg is local (names an integer argument)
+	{
+		string motto {"Who dares wins"}; // motto is local
+		auto p = new Record{"Hume"}; // p points to an unnamed Record (created by new)
+		// ...
+	}
+	
+	struct Record {
+		string name; // name is a member of Record (a string member)
+		// ...
+	};
+	\end{lstlisting}
+	\end{frame}
+
+	\begin{frame}{Constantes}
+		\small
+	C++ admite dos conceptos de inmutabilidad (un objeto con un estado inalterable):
+	\begin{itemize}
+		\item \textbf{const}: significa aproximadamente «prometo no cambiar este valor». Se utiliza principalmente para especificar interfaces, de modo que los datos se puedan pasar a funciones utilizando punteros y referencias sin temor a que se modifiquen. El compilador hace cumplir la promesa hecha por \textbf{const}. El valor de un \textbf{const} se puede calcular en tiempo de ejecución.
+		\item \textbf{constexpr}: significa aproximadamente «evaluarse en tiempo de compilación». Se utiliza principalmente para especificar constantes, para permitir la colocación de datos en memoria de solo lectura (donde es poco probable que se corrompan) y para mejorar el rendimiento. El valor de un \textbf{constexpr} debe ser calculado por el compilador.
+	\end{itemize}
+	 
+
+	\end{frame}
+	
+%	\begin{frame}[fragile]{Constantes}
+%		
+%	\begin{lstlisting}
+%constexpr int dmv = 17; // dmv is a named constant
+%int var = 17; // var is not a constant
+%const double sqv = sqrt(var); // sqv is a named constant, possibly computed at run time
+%double sum(const vector<double>&); // sum will not modify its argument 
+%vector<double> v {1.2, 3.4, 4.5}; // v is not a constant
+%const double s1 = sum(v); // OK: sum(v) is evaluated at run time
+%constexpr double s2 = sum(v); // error: sum(v) is not a constant expression
+%	\end{lstlisting}
+%	\small
+%	Para que una función sea utilizable en una \textit{expresión constante}, es decir, en una expresión que será evaluada por el compilador, debe estar definida como \textbf{constexpr} o \textbf{consteval}. Por ejemplo:
+%	\begin{lstlisting}
+%constexpr double square(double x) { return x*x; }
+%constexpr double max1 = 1.4*square(17); // OK: 1.4*square(17) is a constant expression
+%constexpr double max2 = 1.4*square(var); // error: var is not a constant, so square(var) is not a constant
+%const double max3 = 1.4*square(var); // OK: may be evaluated at run time		
+%	\end{lstlisting}
+%	
+%	\end{frame}
+%	
+%	\begin{frame}[fragile]{Constantes}
+%	\small	
+%	Las funciones declaradas como \textbf{constexpr} o \textbf{consteval} son la versión de C++ del concepto de \textit{funciones puras}. No pueden tener efectos secundarios y solo pueden utilizar la información que se les pasa como argumentos. En concreto, no pueden modificar variables no locales, pero pueden tener lazos y utilizar sus propias variables locales.\\
+%	\vspace{0.5cm}
+%	Por ejemplo:
+%	
+%	\begin{lstlisting}
+%constexpr double nth(double x, int n) // assume 0<=n
+%{
+%	double res = 1;
+%	int i = 0;
+%	while (i > n) { // while-loop: do while the condition is true
+%		res *= x;
+%		++i;
+%	}
+%return res;
+%}	
+%	\end{lstlisting}
+%	
+%	\end{frame}
+%		
+%	\begin{frame}[fragile]{Punteros, Arrays y Referencias}
+%	\begin{lstlisting}
+%	char v[6]; // array of 6 characters
+%	char* p; // pointer to character
+%	char* p = &v[3]; // p points to v's fourth element
+%	char x = *p; // *p is the object that p points to
+%	
+%		
+%	\end{lstlisting}
+%	\small	
+%	En una expresión, el prefijo unario \textbf{*} significa ‘‘contenido de’’ y el prefijo unario \textbf{\&} significa ‘‘dirección de’’. Podemos representarlo gráficamente de la siguiente manera:
+%	
+%	\begin{figure}[htb]
+%		\centering
+%		\includegraphics[width=0.7\textwidth]{images/Cpp/cpp_pointers}
+%	\end{figure}
+%	\end{frame}
+%	
+%	\begin{frame}[fragile]{Punteros, Arrays y Referencias}
+%	\begin{lstlisting}
+%void print()
+%{
+%	int v1[10] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+%	for (auto i=0; i!=10; ++i) // print elements
+%	cout << v[i] << '\n';
+%	// ...
+%}		
+%	\end{lstlisting}
+%	
+%	\begin{lstlisting}
+%void print2()
+%{
+%	int v[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+%	for (auto x : v) // for each x in v
+%	cout << x << '\n';
+%	for (auto x : {10, 21, 32, 43, 54, 65}) // for each integer in the list
+%	cout << x << '\n';
+%	// ...
+%}		
+%	\end{lstlisting}
+%	\end{frame}
+%	
+%	\begin{frame}[fragile]{Punteros, Arrays y Referencias}
+%	\begin{lstlisting}
+%void increment()
+%{
+%	int v[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+%	for (auto& x : v) // add 1 to each x in v
+%	++x;
+%	// ...
+%}
+%	\end{lstlisting}
+%	\end{frame}
+%	
+%	\begin{frame}[fragile]{Punteros, Arrays y Referencias}
+%	\small	
+%	Las referencias son especialmente útiles para especificar argumentos de funciones. Por ejemplo:
+%	\begin{lstlisting}
+%	void sort(vector<double>& v); // sort v (v is a vector of doubles)	
+%	\end{lstlisting}
+%		
+%	Al usar una referencia, garantizamos que, al llamar a \textbf{sort(\texttt{num\_vec})}, no copiemos \textbf{\texttt{num\_vec}}. Por lo tanto, es \textbf{\texttt{num\_vec}} lo que se ordena, no una copia.
+%	Cuando no queremos modificar un argumento, pero tampoco queremos el costo de copiarlo, usamos una referencia constante, es decir, una referencia a un \textbf{const}. Por ejemplo:
+%	
+%	\begin{lstlisting}
+%	double sum(const vector<double>&)
+%	\end{lstlisting}
+%	
+%	\begin{lstlisting}
+%	T a[n] // T[n]: a is an array of n Ts
+%	T* p // T*: p is a pointer to T
+%	T& r // T&: r is a reference to T
+%	T f(A) // T(A): f is a function taking an argument of type A returning a result of type T
+%	\end{lstlisting}
+%	
+%	\end{frame}
+%	
+%	
+%		
+%	\begin{frame}[fragile]{Testeos}
+%	\begin{lstlisting}
+%bool accept()
+%{
+%	cout << "Do you want to proceed (y or n)?\n"; // write question
+%	char answer = 0; // initialize to a value that will not appear on input
+%	cin >> answer; // read answer
+%	if (answer == 'y')
+%		return true;
+%	return false;
+%}
+%	\end{lstlisting}	
+%	
+%	\begin{itemize}
+%		\item if/else
+%		\item while, do/while
+%		\item for
+%		\item switch
+%	\end{itemize}
+%		
+%	\end{frame}
+%	
+%	
+	\begin{frame}[fragile]{Mapeo a Hardware}
+		\small	
+		C++ ofrece una asignación directa al hardware. Al utilizar una de las operaciones fundamentales, la implementación es la que ofrece el hardware, normalmente una sola operación de máquina. Por ejemplo, al sumar dos enteros, x+y ejecuta una instrucción de máquina de suma de enteros.
+		Una implementación de C++ ve la memoria de una máquina como una secuencia de ubicaciones de memoria en las que puede colocar objetos (tipificados) y direccionarlos mediante punteros.\newline
+		
+		
+		\begin{columns}[t]
+		\column{0.5\textwidth}
+		con punteros	
+		\begin{lstlisting}
+int x = 2;
+int y = 3;
+int* p = &x;
+int* q = &y; // p!=q and *p!=*q
+p = q; // p becomes &y; now p==q, so (obviously)*p==*q
+		\end{lstlisting}
+		\column{0.5\textwidth}
+		con referencias	
+		\begin{lstlisting}
+int x = 2;
+int y = 3;
+int& r = x; // r refers to x
+int& r2 = y; // r2 refers to y
+r = r2; // read through r2, write through r: x becomes 3
+		\end{lstlisting}
+	\end{columns}	
+	\end{frame}
+		
+		
+\begin{frame}{Tipos definidos por el usuario}
+\begin{itemize}
+	\item Estructuras
+	\item Clases 
+	\item Enumeraciones
+	\item Uniones
+\end{itemize}	
+\end{frame}
+
+\begin{frame}[fragile]{Estructuras}
+\scriptsize
+\begin{lstlisting}
+struct Vector {
+	double* elem; // pointer to elements
+	int sz; // number of elements
+};
+Vector v;
+
+void vector_init(Vector& v, int s) // initialize a Vector
+{
+	v.elem = new double[s]; // allocate an array of s doubles
+	v.sz = s;
+}
+\end{lstlisting}
+
+\note{The new operator allocates memory from an area called the free store (also known as dynamic memory and heap). Objects allocated on the free store are independent of the scope from which they are created and ‘‘live’’ until they are destroyed using the delete operator}
+
+\begin{lstlisting}
+double read_and_sum(int s){
+	Vector v;
+	vector_init(v,s); // allocate s elements for v
+	for (int i=0; i!=s; ++i)
+		cin>>v.elem[i]; // read into elements
+	double sum = 0;
+	for (int i=0; i!=s; ++i)
+		sum+=v.elem[i]; // compute the sum of the elements
+	return sum;
+}
+\end{lstlisting}	
+\end{frame}
+	
+	
+\begin{frame}[fragile]{Clases}
+\begin{lstlisting}
+class Vector {
+	public:
+		Vector(int s) :elem{new double[s]}, sz{s} { } // construct a Vector
+		double& operator[](int i) { return elem[i]; } // element access: subscripting
+		int size() { return sz; }
+	private:
+		double* elem; // pointer to the elements
+		int sz; // the number of elements
+};
+
+Vector v(6); // a Vector with 6 elements
+
+\end{lstlisting}	
+
+	\begin{figure}[htb]
+	\centering
+	\includegraphics[width=0.8\textwidth]{images/Cpp/cpp_classes}
+\end{figure}
+	
+\end{frame}
+
+\begin{frame}[fragile]{Enumeraciones}
+\begin{lstlisting}
+enum class Color { red, blue, green };
+enum class Traffic_light { green, yellow, red };
+Color col = Color::red;
+Traffic_light light = Traffic_light::red;
+\end{lstlisting}
+\vspace{0.4cm}	
+\small	
+El \textbf{class} después de \textbf{enum} especifica que la enumeración es fuertemente tipeada y que los enumeradores tienen ámbito (scoped).
+\vspace{0.4cm}	
+
+\begin{lstlisting}
+Traffic_light& operator++(Traffic_light& t) // prefix increment: ++
+{
+	switch (t) {
+		case Traffic_light::green: return t=Traffic_light::yellow;
+		case Traffic_light::yellow: return t=Traffic_light::red;
+		case Traffic_light::red: return t=Traffic_light::green;
+	}
+}
+auto signal = Traffic_light::red;
+Traffic_light next = ++signal; // next becomes Traffic_light::green
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Enumeraciones}
+	\small
+Si la repetición del nombre de la enumeración, \textbf{\texttt{Traffic\_light}}, se vuelve demasiado tediosa, podemos abreviarlo en un ámbito.\newline	
+\begin{lstlisting}
+Traffic_light& operator++(Traffic_light& t) // prefix increment: ++
+{
+	using enum Traffic_light; // here, we are using Traffic_light
+	
+	switch (t) {
+		case green: return t=yellow;
+		case yellow: return t=red;
+		case red: return t=green;
+	}
+}
+\end{lstlisting}	
+\end{frame}
+
+\begin{frame}[fragile]{Uniones}
+	\small
+Una \textbf{union} es una \textbf{struct} en la que todos los miembros se asignan a la misma dirección, de modo que ocupa solo el espacio de su miembro más grande. Naturalmente, una \textbf{union} solo puede contener el valor de un miembro a la vez.\\
+\vspace{0.4cm}
+\begin{lstlisting}
+enum class Type { ptr, num }; // a Type can hold values ptr and num
+struct Entry {
+	string name; // string is a standard-library type
+	Type t;
+	Node* p; // use p if t==Type::ptr
+	int i; // use i if t==Type::num
+};
+\end{lstlisting}
+\vspace{0.4cm}
+Los miembros \textbf{p} e \textbf{i} nunca se usan simultáneamente, por lo que se desperdicia espacio. Esto se puede recuperar fácilmente especificando que ambos deben ser miembros de una \textbf{union}, como se muestra a continuación:
+
+\end{frame}
+
+\begin{frame}[fragile]{Uniones}
+\begin{lstlisting}
+union Value {
+	Node* p;
+	int i;
+};
+\end{lstlisting}
+\vspace{0.4cm}
+\small
+Ahora \textbf{Value::p} y \textbf{Value::i} se colocan en la misma dirección de memoria de cada objeto \textbf{Value}.
+El lenguaje no realiza un seguimiento de qué tipo de valor contiene una \textbf{union}, por lo que el programador debe hacerlo:
+\vspace{0.4cm}
+\begin{lstlisting}
+struct Entry {
+	string name;
+	Type t;
+	Value v; // use v.p if t==Type::ptr; use v.i if t==Type::num
+};
+\end{lstlisting}	
+\end{frame}
+
+\begin{frame}{Módulos}
+\small
+C++ admite la compilación independiente, donde el código de usuario solo ve las declaraciones de los tipos y funciones utilizados. Esto se puede hacer de dos maneras:
+\begin{itemize}
+	\item \textit{Header files}: Coloca las declaraciones en archivos separados, llamados archivos de cabecera, y textualmente \textbf{\#include} un archivo de encabezado donde se necesiten sus declaraciones.
+	\item \textit{Modules}: Define los archivos \textbf{module}, los compila por separado e \textbf{import}a donde sea necesario. Solo las declaraciones explícitamente \textbf{export}adas son vistas por el código \textbf{import}ando el \textbf{module}.	
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]{Header Files}
+	\small
+\begin{lstlisting}
+// Vector.h:
+class Vector {
+	public:
+		Vector(int s);
+		double& operator[](int i);
+		int size();
+	private:
+		double* elem; // elem points to an array of sz doubles
+		int sz;
+};	
+\end{lstlisting}
+%\end{frame}
+%
+%\begin{frame}[fragile]{Header Files}
+\begin{lstlisting}
+// Vector.cpp:
+#include "Vector.h" // get Vector's interface
+
+Vector::Vector(int s) :elem{new double[s]}, sz{s} // initialize members
+{ ... }
+double& Vector::operator[](int i) {
+	return elem[i];
+}
+int Vector::size(){
+	return sz;
+}	
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Header Files}
+\begin{lstlisting}
+// user.cpp:
+#include "Vector.h" // get Vector's interface
+#include <cmath> // get the standard-library math function interface including sqrt()
+
+double sqrt_sum(const Vector& v)
+{
+	double sum = 0;
+	for (int i=0; i != v.size(); ++i)
+	sum +=std::sqrt(v[i]); // sum of square roots
+	return sum;
+}
+
+\end{lstlisting}
+	
+\begin{figure}[htb]
+\centering
+\includegraphics[width=0.65\textwidth]{images/Cpp/cpp_headers_files}
+\end{figure}
+
+
+\end{frame}
+
+\begin{frame}[fragile]{Modules}
+\begin{lstlisting}
+export module Vector; // defining the module called "Vector"
+
+export class Vector {
+	public:
+	Vector(int s);
+	double& operator[](int i);
+	int size();
+	private:
+	double* elem; // elem points to an array of sz doubles
+	int sz;
+};
+
+Vector::Vector(int s)
+	:elem{new double[s]}, sz{s} // initialize members
+{
+}
+
+double& Vector::operator[](int i)
+{
+	return elem[i];
+}
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Modules}
+\begin{lstlisting}
+int Vector::size()
+{
+	return sz;
+}
+
+export bool operator==(const Vector& v1, const Vector& v2)
+{
+	if (v1.size()!=v2.size())
+		return false;
+	for (int i = 0; i<v1.size(); ++i)
+		if (v1[i]!=v2[i])
+			return false;
+	return true;
+}	
+\end{lstlisting}
+\small
+Esto define un \textbf{module} llamado \textbf{Vector}, que exporta la clase \textbf{Vector}, todas sus funciones miembro y el operador de definición de función no miembro \textbf{==}.
+	
+
+\end{frame}
+
+\begin{frame}[fragile]{Modules}
+\small
+Este módulo se utiliza importándolo donde lo necesitamos. Por ejemplo:
+\begin{lstlisting}
+// file user.cpp:
+
+import Vector; // get Vector's interface
+#include <cmath> // get the standard-library math function interface including sqrt()
+
+double sqrt_sum(Vector& v)
+{
+	double sum = 0;
+	for (int i=0; i!=v.size(); ++i)
+		sum+=std::sqrt(v[i]); // sum of square roots
+	return sum;
+}
+\end{lstlisting}
+	
+Se podría haber \textbf{import}ado también las funciones matemáticas de la biblioteca estándar, pero se usó el clásico \textbf{\#include} solo para demostrar que podemos combinar funciones antiguas con nuevas. Esta combinación es esencial para actualizar gradualmente el código antiguo, pasando de usar \textbf{\#include} a usar \textbf{import}.
+\end{frame}
+
+\begin{frame}[fragile]{Modules}
+	Las diferencias entre headers y módulos no son solo sintácticas.
+	\begin{itemize}
+		\item Un módulo se compila una sola vez (en lugar de en cada unidad en la que se utiliza).
+		\item Se pueden importar dos módulos en cualquier orden sin cambiar su significado.
+		\item Si se \textbf{import} o \textbf{\#include} algo en un módulo, los usuarios del módulo no acceden implícitamente a (y no les molesta): \textbf{import} no es transitivo.
+	\end{itemize}
+	\vspace*{2.5mm}
+	\textbf{NOTA}: Algunos compiladores todavía no admiten el uso de \textbf{import std}, por lo que en esos casos se debe seguir usando \textbf{\#include<iostream>}
+	
+\end{frame}
+
+\begin{frame}[fragile]{Modules}
+\scriptsize
+Al definir un módulo, no es necesario separar las declaraciones y definiciones en archivos separados; podemos hacerlo si esto mejora la organización del código fuente, pero no es obligatorio. Podríamos definir el módulo \textbf{Vector} simple así:
+
+\begin{lstlisting}
+export module Vector; // defining the module called "Vector"
+export class Vector {
+	// ...
+};
+export bool operator==(const Vector& v1, const Vector& v2){
+	// ...
+}
+\end{lstlisting}
+\begin{figure}[htb]
+\centering
+\includegraphics[width=0.7\textwidth]{images/Cpp/cpp_modules}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}[fragile]{Namespaces}
+\small
+Además de las funciones, las clases y las enumeraciones, C++ ofrece \textit{namespaces} como mecanismo para expresar que algunas declaraciones pertenecen juntas y que sus nombres no deben entrar en conflicto con otros nombres.	
+\begin{lstlisting}
+void my_code(vector<int>& x, vector<int>& y)
+{
+	using std::swap; 	// make the standard-library swap available locally
+	// ...
+	swap(x,y); 			// std::swap()
+	other::swap(x,y); 	// some other swap()
+	// ...
+}
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}{Tipos de clases}
+	\small
+	\begin{itemize}
+		\item Concretas: La idea básica es que se comportan "igual que los tipos integrados". Por ejemplo, un tipo de número complejo y un entero de precisión infinita son muy similares a un int integrado, excepto, por supuesto, que tienen su propia semántica y conjuntos de operaciones. La característica definitoria de un tipo concreto es que su representación es parte de su definición.
+		\item Abstractas: Es un tipo que aísla completamente al usuario de los detalles de implementación. Para ello, desacoplamos la interfaz de la representación y renunciamos a las variables locales genuinas.
+		\item Jerarquías de clases: Es un conjunto de clases ordenadas en una red creada por derivación (p. ej., : public). Usamos jerarquías de clases para representar conceptos que tienen relaciones jerárquicas, como «Un camión de bomberos es un tipo de camión que a su vez es un tipo de vehículo». 
+	\end{itemize}
+	\vspace{2mm}
+	La palabra \textbf{virtual} significa “puede ser redefinido posteriormente en una clase derivada de ésta”.
+	
+\end{frame}
+
+\begin{frame}[fragile]{Clases}
+\begin{lstlisting}
+class MyClass
+{
+	public:
+	// everything in here
+	// has public access level
+	protected:
+	// everything in here
+	// has protected access level
+	private:
+	// everything in here
+	// has private access level
+};
+\end{lstlisting}
+\end{frame}
+	
+\begin{frame}[fragile]{Clases}
+\scriptsize
+Un tipo de aritmética clásica definida por el usuario que trabaje con números complejos: 
+\begin{lstlisting}
+class complex {
+	double re, im; // representation: two doubles
+public:
+	complex(double r, double i) :re{r}, im{i} {} // construct complex from two scalars
+	complex(double r) :re{r}, im{0} {} // construct from one scalar
+	complex() :re{0}, im{0} {} // default complex: {0,0}
+	complex(complex z) :re{z.re}, im{z.im} {} // copy constructor
+	~complex() { std::cout << "Destructor invoked."; }
+
+	double real() const { return re; }
+	void real(double d) { re=d; }
+	double imag() const { return im; }
+	void imag(double d) { im=d; }
+
+	complex& operator+=(complex z)
+	{
+		re+=z.re; // add to re and im
+		im+=z.im;
+		return *this; // return the result
+	}
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Clases - continuación}
+\begin{lstlisting}
+	complex& operator-=(complex z)
+	{
+		re-=z.re;
+		im-=z.im;
+		return *this;
+	}
+	complex& operator*=(complex); // defined out-of-class somewhere
+	complex& operator/=(complex); // defined out-of-class somewhere
+};
+
+complex& complex::operator*=(complex other) {
+	// ...
+	return *this;
+}
+
+complex& complex::operator/=(complex other) {
+	// ...
+	return *this;
+}
+
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Clases - continuación}
+\begin{lstlisting}
+int main()
+{
+	complex cpx_value{ 1.5, -2.0 }; // invoke a user-defined constructor
+	std::cout << cpx_value.real() << ' ' << cpx_value.imag() << 'j';
+}
+\end{lstlisting}
+\end{frame}
+
+
+
+\begin{frame}[fragile]{Herencia}
+\begin{lstlisting}
+class MyBaseClass
+{
+	public:
+	char c;
+	int x;
+};
+
+class MyDerivedClass : public MyBaseClass
+{
+	// c and x also accessible here
+};
+
+int main()
+{
+	MyDerivedClass o;
+	o.c = 'a';
+	o.x = 123;
+}
+\end{lstlisting}	
+En este ejemplo, \textbf{MyDerivedClass} hereda de \textbf{MyBaseClass}.
+	
+\end{frame}
+
+\begin{frame}[fragile]{Herencia}
+\small
+Si definimos la \textbf{MyBaseClass} con las variables miembro como \textbf{protected}
+\begin{lstlisting}
+class MyBaseClass
+{
+	protected:
+		char c;
+		int x;
+};
+
+class MyDerivedClass : public MyBaseClass
+{
+	// c and x also accessible here
+};
+
+int main()
+{
+	MyDerivedClass o;
+	o.c = 'a'; // Error, not accessible to object
+	o.x = 123; // error, not accessible to object
+}
+\end{lstlisting}	
+En este ejemplo, \textbf{MyDerivedClass} hereda de \textbf{MyBaseClass}.
+\end{frame}
+
+\begin{frame}[fragile]{Herencia}
+	\small
+	Si definimos la \textbf{MyBaseClass} con las variables miembro como \textbf{private}
+	\begin{lstlisting}
+	class MyBaseClass
+	{
+		private:
+			char c;
+			int x;
+	};
+	class MyDerivedClass : public MyBaseClass
+	{
+		// c and x NOT accessible here
+	};
+	int main()
+	{
+		MyDerivedClass o;
+		o.c = 'a'; // Error, not accessible to object
+		o.x = 123; // error, not accessible to object
+	}
+	\end{lstlisting}	
+	En este ejemplo, \textbf{MyDerivedClass} hereda de \textbf{MyBaseClass}.
+\end{frame}
+
+\begin{frame}{Polimorfismo}
+	\small
+Se dice que la clase derivada es una clase base. Su tipo es compatible con el tipo de la clase base. Además, un puntero a una clase derivada es compatible con un puntero a la clase base. Esto es importante, así que repitámoslo: un puntero a una clase derivada es compatible con un puntero a una clase base. Junto con la herencia, esto se utiliza para lograr la funcionalidad conocida como \textbf{polimorfismo}. El polimorfismo significa que el objeto puede transformarse en diferentes tipos.\\
+\vspace{0.4cm}
+El polimorfismo en C++ se logra mediante una interfaz conocida como funciones virtuales. Una función virtual es una función cuyo comportamiento puede sobrescribirse en clases derivadas posteriores. Y nuestro puntero/objeto se transforma en diferentes tipos para invocar la función apropiada.
+\end{frame}
+
+\begin{frame}[fragile]{Polimorfismo}
+\begin{lstlisting}
+#include <iostream>
+
+class MyBaseClass
+{
+	public:
+	virtual void dowork()
+	{
+		std::cout << "Hello from a base class." << '\n';
+	}
+};
+
+class MyDerivedClass : public MyBaseClass
+{
+	public:
+	void dowork()
+	{
+		std::cout << "Hello from a derived class." << '\n';
+	}
+};
+
+\end{lstlisting}	
+\end{frame}
+
+\begin{frame}[fragile]{Polimorfismo}
+\begin{lstlisting}
+int main()
+{
+	MyBaseClass* o = new MyDerivedClass;
+	o->dowork();
+	delete o;
+}
+\end{lstlisting}	
+\end{frame}
+
+
+\begin{frame}
+	\small
+Los tres pilares de la programación orientada a objetos son:
+
+\begin{itemize}
+	\item Encapsulación
+	\item Herencia
+	\item Polimorfismo
+\end{itemize}
+\vspace{2mm}
+	
+La \textit{encapsulación} consiste en agrupar los campos en diferentes zonas de visibilidad, ocultar la implementación al usuario y exponer la interfaz, por ejemplo.\\
+La \textit{herencia} es un mecanismo mediante el cual podemos crear clases heredando de una clase base. La herencia crea una jerarquía de clases y una relación entre ellas.\\
+El \textit{polimorfismo} es la capacidad de un objeto de transformarse en diferentes tipos durante la ejecución, garantizando que se invoque la función correcta. Esto se logra mediante la herencia, las funciones virtuales y sobrescritas, y los punteros de clase base y derivada.
+\end{frame}
+
+
+\begin{frame}[fragile]{Templates}
+\small	
+Los templates (plantillas) son mecanismos que facilitan la programación genérica. En términos generales, "genérico" significa que podemos definir una función o clase sin importar qué tipos acepte. Definimos estas funciones y clases usando un tipo genérico. Y al instanciarlos, usamos un tipo concreto. Por lo tanto, podemos usar templates cuando queremos definir una clase o función que acepte prácticamente cualquier tipo.	
+	
+\begin{lstlisting}
+#include <iostream>
+
+template <typename T>
+void myfunction(T param){
+	std::cout << "The value of a parameter is: " << param;
+}
+
+int main()
+{
+	myfunction<int>(123);
+	myfunction<double>(123.456);
+	myfunction<char>('A');
+}	
+\end{lstlisting}	
+\end{frame}
+
+\begin{frame}[fragile]{Templates}
+	\scriptsize
+\begin{lstlisting}
+	
+#include <iostream>
+
+template <typename T>
+class MyClass {
+	private:
+		T x;
+	public:
+		MyClass(T xx);
+};
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Templates}
+	\begin{lstlisting}
+		
+template <typename T>
+MyClass<T>::MyClass(T xx)
+	: x{xx}
+{
+	std::cout << "Constructor invoked. The value of x is: " << x << '\n';
+}
+
+int main()
+{
+	MyClass<int> o{ 123 };
+	MyClass<double> o2{ 456.789 };
+}
+
+\end{lstlisting}
+
+\end{frame}
+
+
+
+\section{Python Review}
+
+\begin{frame}
+\centering	
+\Huge{\textbf{PYTHON Review}}
+\end{frame}	
+
+\begin{frame}
+	\small
+El lenguaje de programación Python fue creado al principio de los 90’ por Guido van Rossum.\newline
+
+Es un lenguaje de programación potente y fácil de aprender. Tiene estructuras de datos de alto nivel eficientes y un simple pero efectivo sistema de programación orientado a objetos. La elegante sintaxis de Python y su tipado dinámico, junto a su naturaleza interpretada lo convierten en un lenguaje ideal para scripting y desarrollo rápido de aplicaciones en muchas áreas, para la mayoría de plataformas.
+\end{frame}	
+
+\begin{frame}{Tipos de datos: básicos}
+
+Los tipos de datos son la base de cualquier programa, ya que determinan cómo se almacenan y manipulan los valores. Existen tipos primitivos como enteros, flotantes, cadenas de texto y booleanos, y estructuras de datos más avanzadas como listas, tuplas, conjuntos y diccionarios.
+\scriptsize
+\begin{longtable}{p{3.5cm}p{3.5cm}p{7cm}}
+	\toprule
+	\textbf{Nombre} & \textbf{Palabra reservada} & \textbf{Sintaxis} \\
+	\midrule
+	Entero & int & \texttt{0} \\
+	Flotante & float & \texttt{3.14} \\
+	Cadena de texto & str & \texttt{"Hola"} \\
+	Booleano & bool & \texttt{True / False} \\
+	Complejo & complex & \texttt{1 + 2j} \\
+	Byte & bytes & \texttt{b"Hola"} \\
+	Nulo & NoneType & \texttt{None} \\
+\end{longtable}
+\end{frame}	
+
+
+\begin{frame}{Tipos de datos: Estructuras}
+\small
+\begin{longtable}{p{3.5cm}p{3.5cm}p{7cm}}
+	\toprule
+	\textbf{Nombre} & \textbf{Palabra reservada} & \textbf{Sintaxis} \\
+	\midrule
+	Lista/Pila & list & \texttt{[1, 2, 3]} \\
+	Tupla & tuple & \texttt{(1, 2, 3)} \\
+	Conjunto & set & \texttt{\{1, 2, 3\}} \\
+	Conjunto inmutable & frozenset & \texttt{frozenset(\{1, 2, 3\})} \\
+	Diccionario & dict & \texttt{\{``clave": "valor"\}} \\
+	Bytearray & bytearray & \texttt{bytearray(5)} \\
+	Rango & range & \texttt{range(5)} \\
+	Memory view & memoryview & \texttt{memoryview(bytes(5))} \\
+	\bottomrule
+\end{longtable}	
+\end{frame}	
+
+\begin{frame}{Sintaxis básica}
+\small
+\begin{longtable}{p{3cm}p{3cm}p{8cm}}
+	\toprule
+	\textbf{Nombre} & \textbf{P. reservada} & \textbf{Sintaxis} \\
+	\midrule
+	Condicional if & if & \texttt{if \textit{condición}:} \\
+	Condicional elif & elif & \texttt{elif \textit{otra\_condición}:} \\
+	Condicional else & else & \texttt{else:} \\
+	Bucle for & for & \texttt{for \textit{elemento} in \textit{secuencia}:} \\
+	Bucle while & while & \texttt{while \textit{condición}:} \\
+	break / continue & break / continue & \texttt{break}, \texttt{continue}\\
+	Función def & def & \texttt{def \textit{nombre}(\textit{parámetros}):} \\
+	Clase class & class & \texttt{class \textit{NombreClase}:} \\
+	Variable global & global & \texttt{global nombre\_variable} \\
+	Excepciones & try, except & \texttt{try: ... except \textit{Excepción}:} \\
+	%Bloque finally & finally & \texttt{finally:} \\
+	Retorno & return & \texttt{return \textit{valor}} \\
+	Comprobar tipo & is & \texttt{if \textit{variable} is \textit{tipo}:} \\
+	Existe & in & \texttt{if \textit{elemento} in \textit{colección}:} \\
+	Módulo & import, from & \texttt{import \textit{módulo}} \\
+		   &  & \texttt{from \textit{módulo} import \textit{nombre}} \\
+	\bottomrule
+\end{longtable}
+\end{frame}	
+	
+\begin{frame}{Operadores: Aritméticos y de Comparación}
+\small
+\begin{longtable}{p{3cm}p{3cm}p{8cm}}
+	\toprule
+	\textbf{Nombre} & \textbf{Representación} & \textbf{Sintaxis} \\
+	\midrule
+	Suma & + & a + b \\
+	Resta & - & a - b \\
+	Multiplicación & * & a * b \\
+	División & / & a / b \\
+	División entera & // & a // b \\
+	Módulo (residuo) & \% & a \% b \\
+	Exponenciación & ** & a**b \\
+	\bottomrule
+\end{longtable}
+\begin{longtable}{p{3cm}p{3cm}p{8cm}}
+	\toprule
+	Igualdad & == & a == b \\
+	Distinto de & != & a != b \\
+	Mayor que & > & a > b \\
+	Menor que & < & a < b \\
+	Mayor o igual que & >=/ & a >= b \\
+	Menor o igual que & <= & a <= b \\
+	\bottomrule
+\end{longtable}
+\end{frame}		
+	
+\begin{frame}{Operadores: Lógicos y de Asignación}
+	\small
+	\begin{longtable}{p{3cm}p{3cm}p{8cm}}
+		\toprule
+		\textbf{Nombre} & \textbf{Representación} & \textbf{Sintaxis} \\
+		\midrule
+		AND & and & a and b \\
+		OR & or & a or b \\
+		NOT & not & not a \\
+		\bottomrule
+	\end{longtable}
+	\begin{longtable}{p{3cm}p{3cm}p{8cm}}
+		\toprule
+		Asignación & = & x = 10 \\
+		A. con suma & += & x += 10 \\
+		A. con resta & -= & x -= 10 \\
+		A. con mult. & *= & x *= 10 \\
+		A. con div. & /= & x /= 10 \\
+		A. div. entera & //= & x //= 10 \\
+		A. con módulo & \%= & x \%= 10 \\
+		A. con expo. & **= & x **= 3 \\
+		A. con bitwise AND & \&= & x \&= 3 \\
+		A. con bitwise OR & |= & x |= 3 \\
+		A. con bitwise XOR & \^= & x \^= 3 \\
+		\bottomrule
+	\end{longtable}
+\end{frame}			
+
+\begin{frame}{Operadores}
+	\begin{longtable}{p{4cm}p{3cm}p{7cm}}
+		\toprule
+		\textbf{Nombre} & \textbf{Representación} & \textbf{Sintaxis} \\
+		\midrule
+		\textbf{Identidad} \\
+		Es & is & a is \\
+		No es & is not & a is not b \\
+		\midrule
+		\textbf{Pertenecia} \\
+		Pertenece & in & x in \textit{lista} \\
+		No Pertenece & not in & x not in \textit{lista} \\
+		\midrule
+		\textbf{Bitwise} \\
+		AND bit a bit & \& & a \& b \\
+		OR bit a bit & | & a | b \\
+		XOR bit a bit & \textasciicircum & a \textasciicircum b \\
+		NOT bit a bit & \textasciitilde & a \textasciitilde b \\
+		shift left & << & a << n \\
+		shift right & >> & a >> n \\			
+		\bottomrule
+	\end{longtable}
+\end{frame}			
+	
+\begin{frame}{Funciones}
+	\scriptsize
+	\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{3.5cm} X}
+		\toprule
+		\textbf{Nombre} & \textbf{Operación} \\
+		\midrule
+		print() & Muestra texto o variables en la consola \\
+		input() & Permite la entrada de datos desde la consola \\
+		len() & Devuelve la cantidad de elementos \\
+		type() & Devuelve el tipo de dato \\
+		range() & Genera una secuencia de números en un rango \\
+		int(), float(), str() & Convierte a entero, punto flotante o cadena de caracteres \\
+		list(), tuple(), set(), dict() & Crea listas, tuplas, conjuntos o diccionarios \\
+		sum() & Suma los elementos iterables \\
+		min(), max() & Encuentra el mínimo o máximo en iterables \\
+		sorted() & Ordena elementos en listas y otros iterables \\
+		abs() & Retorna el valor absoluto de un número \\
+		round() & Redondea a un número con decimales concretos \\
+		map() & Aplica una función a cada elemento iterado \\
+		filter() & Filtra elementos iterables según una condición \\
+		reduce() & Aplica una función a los elementos iterables para reducirlos a un único valor \\
+		enumerate() & Agrega un índice a cada elemento iterable \\
+		zip() & Une iterables en pares de elementos \\ 
+		open() & Abre un archivo para leer, escribir o modificar \\
+		\bottomrule
+	\end{tabularx}
+\end{frame}
+
+\begin{frame}{Funciones}
+	\scriptsize
+	\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{3.5cm} X}
+		\toprule
+		\textbf{Nombre} & \textbf{Operación} \\
+		\midrule
+		next() & Retorna el siguiente valor de un iterador \\
+		iter() & Transforma un iterable en un iterador \\
+		chr(), ord() & Trabaja con valores Unicode de caracteres \\
+		bin(), oct(), hex() & Convierte números enteros a diferentes bases \\
+		any(), all() & Evalúa condiciones en iterables para al menos uno o todos los elementos \\
+		pow() & Calcula una potencia \\
+		divmod() & Retorna el cociente y el resto de una división \\
+		eval() & Ejecuta una expresión en forma de string \\
+		format() & Formatea cadenas con valores personalizados \\
+		reversed() & Invierte el orden de un iterable \\
+		slice() & Crea una porción de un iterable sin modificarlo \\
+		complex() & Crea números complejos \\
+		bool() & Transforma un valor en booleano \\
+		bin() & Crea la representación binaria de un número \\
+		globals() &  Retorna las variables globales \\
+		locals() & Retorna las variables locales \\
+		\bottomrule
+	\end{tabularx}
+\end{frame}
+
+% Estructuras de datos
+\begin{frame}{Estructuras de datos: Listas}
+	\scriptsize
+	\begin{tabularx}{\linewidth}{
+			>{\raggedright\arraybackslash}p{2cm}   % Columna fija
+			>{\raggedright\arraybackslash}X        % Columna flexible
+			>{\raggedright\arraybackslash}X        % Columna flexible
+		}
+		\toprule
+		\textbf{Nombre} & \textbf{Operación} & \textbf{Sintaxis} \\
+		\midrule
+		append() & Agrega un elemento al final & lista.append(valor) \\
+		extend() & Agrega múltiples elementos & lista.extend(iterable) \\
+		insert() & Inserta un elemento en un índice & lista.insert(i, valor) \\
+		remove() & Elimina la primera ocurrencia de un valor & lista.remove(valor) \\
+		pop() & Elimina y devuelve un elemento (por índice o último) & lista.pop(i) lista.pop() \\
+		index() & Devuelve el índice de un valor & lista.index(valor) \\
+		count() & Cuenta las ocurrencias de un valor & lista.count(valor) \\
+		sort() & Ordena la lista & lista.sort() \\
+		reverse() & Invierte el orden de la lista & lista.reverse() \\
+		copy() & Crea una copia de la lista & lista.copy() \\
+		clear() & Elimina todos los elementos & lista.clear() \\
+		\bottomrule 
+	\end{tabularx}
+\end{frame}
+
+\begin{frame}{Estructuras de datos: Tuplas (tuple)}
+	\scriptsize
+	\begin{tabularx}{\linewidth}{
+			>{\raggedright\arraybackslash}p{2cm}   % Columna fija
+			>{\raggedright\arraybackslash}X        % Columna flexible
+			>{\raggedright\arraybackslash}X        % Columna flexible
+		}
+		\toprule
+		\textbf{Nombre} & \textbf{Operación} & \textbf{Sintaxis} \\
+		\midrule
+		count() & Cuenta las ocurrencias de un valor & tupla.count(valor) \\
+		index() & Devuelve el índice de un valor & tupla.index(valor) \\
+		
+		\bottomrule 
+	\end{tabularx}
+\end{frame}
+
+\begin{frame}{Estructuras de datos: Conjuntos (set)}
+	\scriptsize
+	\begin{tabularx}{\linewidth}{
+			>{\raggedright\arraybackslash}p{2cm}   % Columna fija
+			>{\raggedright\arraybackslash}X        % Columna flexible
+			>{\raggedright\arraybackslash}X        % Columna flexible
+		}
+		\toprule
+		\textbf{Nombre} & \textbf{Operación} & \textbf{Sintaxis} \\
+		\midrule
+		add() & Agrega un elemento al conjunto & conjunto.add(valor) \\
+		remove() & Elimina un elemento (error si no existe) & conjunto.remove(valor) \\
+		discard() & Elimina un elemento (sin error si no existe) & conjunto.discard(valor) \\
+		pop() & Elimina y devuelve un elemento aleatorio & conjunto.pop() \\
+		clear() & Elimina todos los elementos & conjunto.clear() \\
+		union() & Une dos conjuntos & conjunto.union(otro) \\
+		intersection() & Elementos comunes en ambos conjuntos & conjunto.intersection(otro) \\
+		difference() & Elementos en A pero no en B & conjunto.difference(otro) \\
+		\bottomrule 
+	\end{tabularx}
+\end{frame}
+
+\begin{frame}{Estructuras de datos: Diccionarios (dict)}
+	\scriptsize
+	\begin{tabularx}{\linewidth}{
+			>{\raggedright\arraybackslash}p{2cm}   % Columna fija
+			>{\raggedright\arraybackslash}X        % Columna flexible
+			>{\raggedright\arraybackslash}X        % Columna flexible
+		}
+		\toprule
+		\textbf{Nombre} & \textbf{Operación} & \textbf{Sintaxis} \\
+		\midrule
+		keys() & Devuelve las claves del diccionario & diccionario.keys() \\
+		values() & Devuelve los valores del diccionario & diccionario.values() \\
+		items() & Devuelve pares clave-valor & diccionario.items() \\
+		get() & Obtiene el valor de una clave (sin error) & diccionario.
+		get(clave, defecto) \\
+		pop() & Elimina y devuelve un valor & diccionario.pop(clave) \\
+		popitem() & Elimina y devuelve el último par clave-valor & 		diccionario.popitem() \\
+		update() & Agrega o actualiza claves con valores & diccionario.
+		update(otro\_dict) \\
+		setdefault() & Obtiene el valor o lo asigna si no existe & diccionario. 
+		setdefault(clave, valor) \\
+		copy() & Crea una copia del diccionario & diccionario.copy() \\
+		clear() & Elimina todos los elementos & diccionario.clear() \\
+		\bottomrule 
+	\end{tabularx}
+\end{frame}
+
+\begin{frame}{Archivos}
+	\scriptsize
+	\begin{tabularx}{\linewidth}{
+			>{\raggedright\arraybackslash}p{2cm}   % Columna fija
+			>{\raggedright\arraybackslash}X        % Columna flexible
+			>{\raggedright\arraybackslash}X        % Columna flexible
+		}
+		\toprule
+		\textbf{Nombre} & \textbf{Representación} & \textbf{Sintaxis} \\
+		\midrule
+		open() & Abre un archivo en diferentes modos de acceso & archivo = open(``archivo.txt'', ``r'') \\
+		read() & Lee el contenido completo del archivo & contenido = archivo.read() \\
+		readline() & Lee una única línea del archivo & línea = archivo.readline() \\
+		readlines() & Lee todas las líneas y las devuelve en una lista & líneas = archivo.readlines() \\
+		write() & Escribe datos en un archivo (sobrescribe) & archivo.write(``Texto'') \\
+		writelines() & Escribe múltiples líneas en un archivo & archivo.
+		writelines(lista\_de\_texto) \\
+		close() & Cierra el archivo para liberar recursos & archivo.close() \\
+		flush() & Fuerza la escritura de datos del buffer en el archivo & archivo.flush() \\
+		with open() & Abre un archivo con manejo automático de cierre & with open(``archivo.txt'') as f: \\
+		seek() & Mueve el cursor a una posición específica & archivo.seek(0) \\
+		tell() & Devuelve la posición actual del cursor & pos = archivo.tell() \\
+		\bottomrule 
+	\end{tabularx}
+\end{frame}
+
+\begin{frame}{Archivos}
+	\scriptsize
+	\begin{tabularx}{\linewidth}{
+			>{\raggedright\arraybackslash}p{2cm}   % Columna fija
+			>{\raggedright\arraybackslash}X        % Columna flexible
+			>{\raggedright\arraybackslash}X        % Columna flexible
+		}
+		\toprule
+		\textbf{Nombre} & \textbf{Representación} & \textbf{Sintaxis} \\
+		\midrule
+		truncate() & Corta el archivo a un tamaño específico & archivo.truncate(50) \\
+		exists() & Comprueba si un archivo existe & os.path.exists(``archivo.txt'') \\
+		remove() & Elimina un archivo & os.remove("archivo.txt") \\
+		rename() & Renombra un archivo & os.rename("viejo.txt", ``nuevo.txt'') \\
+		mkdir() & Crea un directorio & os.mkdir(``nueva\_carpeta'') \\
+		rmdir() & Elimina un directorio vacío & os.rmdir(``nueva\_carpeta'') \\
+		listdir() & Lista los archivos en un directorio & os.listdir(``ruta'') \\
+		\bottomrule 
+	\end{tabularx}\\
+	\vspace{.3cm}
+	Modos de apertura en \textbf{open()}:
+	\vspace{.2cm}
+	\begin{itemize}
+		\item ``r'' $\rightarrow$ Lectura (por defecto)
+		\item ``w'' $\rightarrow$ Escritura (borra contenido previo)
+		\item ``a'' $\rightarrow$ Agregar contenido al final
+		\item ``rb'' / ``wb'' $\rightarrow$ Lectura y escritura en modo binario 
+	\end{itemize}
+	\vspace{.2cm}
+	Es recomendable usar \textbf{with open()} en lugar de \textbf{open() + close()} para evitar problemas de memoria.
+	
+\end{frame}
+
+\begin{frame}{Módulos estándar}
+	\scriptsize
+	\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{3.5cm} X}
+		\toprule
+		\textbf{Nombre} & \textbf{Descripción} \\
+		\midrule
+		os & Permite interactuar con el sistema operativo (archivos, directorios, procesos) \\
+		sys & Proporciona acceso a variables y funciones del intérprete de Python \\
+		math & Ofrece funciones matemáticas avanzadas (raíces, logaritmos, trigonometría) \\
+		random & Genera números aleatorios y selecciona elementos al azar \\
+		datetime & Maneja fechas y horas \\
+		time & Funciones para manejar el tiempo y pausas en la ejecución \\
+		json & Permite trabajar con datos en formato JSON (serialización y  deserialización) \\ 
+		csv & Facilita la lectura y escritura de archivos CSV \\
+		re & Proporciona herramientas para trabajar con expresiones regulares \\
+		collections & Contiene estructuras de datos avanzadas (deque, counter, defaultdict) \\
+		itertools & Ofrece herramientas para trabajar con iteradores y combinaciones de datos \\
+		\bottomrule
+	\end{tabularx}
+\end{frame}
+
+\begin{frame}{Módulos estándar}
+	\scriptsize
+	\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{3.5cm} X}
+		\toprule
+		\textbf{Nombre} & \textbf{Descripción} \\
+		\midrule
+		functools & Permite funciones de orden superior y optimización con caché \\
+		operator & Proporciona funciones rápidas para operaciones matemáticas y lógicas \\
+		statistics & Contiene funciones estadísticas como media, mediana y desviación estándar \\
+		logging & Proporciona herramientas para registrar eventos y errores en aplicaciones \\
+		argparse & Facilita el manejo de argumentos en la línea de comandos \\
+		shutil & Permite la manipulación de archivos y directorios (copiar, mover, eliminar) \\
+		socket & Soporta la comunicación en red mediante sockets \\
+		threading & Permite ejecutar múltiples hilos de forma concurrente \\
+		multiprocessing & Soporta la ejecución de múltiples procesos en paralelo \\
+		subprocess & Permite ejecutar comandos del sistema y capturar su salida \\
+		tkinter & Biblioteca estándar de Python para interfaces gráficas (GUIs) \\
+		\bottomrule
+	\end{tabularx}
+\end{frame}
+
+\begin{frame}{Módulos externos}
+	\scriptsize
+	\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{3.5cm} X}
+		\toprule
+		\textbf{Nombre} & \textbf{Descripción} \\
+		\midrule
+		numpy & Librería para cálculo numérico y manipulación de arrays multidimensionales \\
+		pandas & Facilita el análisis y manipulación de datos con estructuras como DataFrames \\
+		matplotlib & Biblioteca para crear gráficos y visualizaciones \\
+		seaborn & Extensión de matplotlib con estilos más avanzados para visualización de datos \\
+		scipy & Contiene herramientas avanzadas de cálculo científico y optimización \\
+		scikit-learn & Librería para Machine Learning con algoritmos de clasificación, regresión y clustering \\
+		tensorflow & Framework para Machine Learning y Deep Learning desarrollado por Google \\
+		torch & Biblioteca de Deep Learning desarrollada por Meta (PyTorch) \\
+		opencv-python & Procesamiento de imágenes y visión artificial \\
+		pillow & Biblioteca para manipulación y procesamiento de imágenes \\
+		\bottomrule
+	\end{tabularx}\\
+	\vspace{.3cm}
+	Todos estos módulos deben instalarse con \textbf{pip install} \textit{nombre\_del\_modulo} antes de ser utilizados.
+\end{frame}
+
+\section{Referencias}
+\begin{frame}{Referencias}
+\begin{itemize}
+	\item A Tour of C++ Third Edition - Bjarne Stroustrup
+	\item Modern C++ for Absolute Beginners - Slobodan Dmitrović
+	\item \url{https://en.cppreference.com/}
+	\item \url{https://hackingcpp.com/}
+	\item \url{https://docs.python.org/}
+	\item \url{https://mouredev.pro/recursos}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\centering
+	\Huge \textbf{Q\&A}
+\end{frame}
+
+
+\end{document}
